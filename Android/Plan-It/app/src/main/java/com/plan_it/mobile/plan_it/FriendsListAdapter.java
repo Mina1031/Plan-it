@@ -6,13 +6,13 @@ package com.plan_it.mobile.plan_it;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -20,22 +20,19 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
     ArrayList<FriendListModel> friendsList;
     Context context;
     int resource;
-    FriendsListActivity friendsListActivity;
+    FriendHolder friend;
+
 
     public FriendsListAdapter(Context context, int resource, ArrayList<FriendListModel> friendsList) {
         super(context, resource, friendsList);
         this.context = context;
         this.resource = resource;
         this.friendsList = friendsList;
-
-        Log.d("Friend ID in Adapter", friendsList.get(1).FriendID);
     }
 
     public View getView(int position, View view, ViewGroup parent) {
-
         View rowView = view;
-        FriendHolder friend;
-
+         final int i = position;
         if(rowView == null)
         {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
@@ -53,18 +50,42 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
         {
             friend = (FriendHolder)rowView.getTag();
         }
-
+        friend.txtFriendID.setTag(position);
         friend.txtFriendID.setText(friendsList.get(position).FriendID);
         friend.imgProfilePic.setImageResource(friendsList.get(position).ProfilePic);
 
         if(friendsList.get(position).IsFavourite)
         {
             friend.imgIsFavourite.setImageResource(R.drawable.ic_favorite_blue_48dp);
+            friend.imgIsFavourite.setTag(R.drawable.ic_favorite_blue_48dp);
         }
         else
         {
             friend.imgIsFavourite.setImageResource(R.drawable.ic_favorite_border_blue_48dp);
+            friend.imgIsFavourite.setTag(R.drawable.ic_favorite_border_blue_48dp);
         }
+
+        friend.imgIsFavourite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(GetImageResource(friend.imgIsFavourite) == R.drawable.ic_favorite_border_blue_48dp)
+                {
+                    friend.imgIsFavourite.setImageResource(R.drawable.ic_favorite_blue_48dp);
+                    friendsList.get(i).IsFavourite = true;
+                    Toast.makeText(context, "Added to favourites",
+                            Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    friend.imgIsFavourite.setImageResource(R.drawable.ic_favorite_border_blue_48dp);
+                    friendsList.get(i).IsFavourite = false;
+
+                    Toast.makeText(context, "Removed from favourites",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
         return rowView;
     }
     static class FriendHolder
@@ -72,5 +93,9 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
         ImageView imgProfilePic;
         TextView txtFriendID;
         ImageView imgIsFavourite;
+    }
+    private int GetImageResource(ImageView imageView)
+    {
+        return (Integer)imageView.getTag();
     }
 }

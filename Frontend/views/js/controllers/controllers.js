@@ -177,6 +177,41 @@ angular.module('controller', [])
 
 })
 
+//search users
+.controller('SearchUserController', function ($scope, ServiceForUser){
+  $scope.token = ServiceForUser.getToken();
+  console.log($scope.token);
+
+  $scope.searchUser = function () {
+    console.log($scope.user.search);
+    ServiceForUser.searchUser($scope.user.search, $scope.token).success(function (data)
+    {
+        $scope.user = data;
+        console.log(data);
+    }
+    );
+  }
+
+})
+
+//user profile
+.controller('UserProfileController', function ($scope, $stateParams, ServiceForUser){
+  $scope.id = $stateParams.userID;
+  $scope.token = ServiceForUser.getToken();
+  console.log($scope.id);
+
+  ServiceForUser.findUserByID($scope.id, $scope.token).success(function (data)
+  {
+      $scope.user = data;
+      console.log(data);
+  }
+  );
+
+})
+
+
+
+
 // angular.module('userController', [])
 .controller('RegisterUserController', function ($scope, $location, ServiceForUser) {
 

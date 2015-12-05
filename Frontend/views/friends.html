@@ -11,11 +11,19 @@
 
 <!-- Change to filter instead -->
 <div class="row searchfriend">
-        <input type="text" placeholder="Search for friends by Email or Username" class="form-control">
+    <form id="searchUser" novalidate ng-submit="searchUser()">
+        <input type="text" ng-model="user.search" placeholder="Search for friends by Email or Username" class="form-control">
+        <input class="btn btn-primary" type="submit" ng-click="" value="Search">
+    </form>
 </div>
 
 <div class="row">
     <div class="col-md-5 contacts">
+
+        <button class="btn-block" ng-model="userList">
+          <!-- <span class="glyphicon glyphicon-user"></span> -->
+          {{userList.friendlyName}}
+        </button>
 
         <button ui-sref="friends.profile" class="btn-block" float="right">
             <span class="glyphicon glyphicon-user"></span>

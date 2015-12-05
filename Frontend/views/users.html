@@ -10,90 +10,20 @@
 </div>
 
 <div class="row searchfriend">
-        <input type="text" placeholder="Search for friends by Email or Username" class="form-control">
+    <form id="searchUser" novalidate ng-submit="searchUser()">
+        <input type="text" ng-model="user.search" placeholder="Search for friends by Email or Username" class="form-control">
+        <input class="btn btn-primary" type="submit" ng-click="" value="Search">
+    </form>
 </div>
 
 <div class="row">
     <div class="col-md-5 contacts">
+        
+        <button class="btn-block" ng-model="user" ui-sref="users.profile({ userID: user.UserID })">
+          <!-- <span class="glyphicon glyphicon-user"></span> -->
+          {{user.friendlyName}}
+        </button>
 
-        <button ui-sref="users.profile" class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            Bugs Bunny
-            <br>@whatsupdoc
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            Buzz Lightyear
-            <br>@infinityandbeyond
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            Donald Duck
-            <br>@quackquack
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            Peter Pan
-            <br>@fairyboy
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            Justin Bieber
-            <br>@neversaynever
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            First Last
-            <br>@username
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            First Last
-            <br>@username
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            First Last
-            <br>@username
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            First Last
-            <br>@username
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            First Last
-            <br>@username
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            First Last
-            <br>@username
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            First Last
-            <br>@username
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            First Last
-            <br>@username
-        </button>
     </div>
     
     <div class="col-md-5 col-md-offset-1">

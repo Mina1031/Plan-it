@@ -1,11 +1,16 @@
 package com.plan_it.mobile.plan_it;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -15,6 +20,7 @@ public class FriendsListActivity extends AppCompatActivity {
     public ArrayList<FriendListModel> friendsList = new ArrayList<>();
     ListView list;
     FriendsListAdapter adapter;
+    Context context = this;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,8 +28,34 @@ public class FriendsListActivity extends AppCompatActivity {
         fillFriendsList();
         list = (ListView)findViewById(R.id.friends_list_view);
         list.setAdapter(new FriendsListAdapter(this, R.layout.friends_list_item, friendsList));
-    }
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                ImageView imgIsFavourite = (ImageView) view.findViewById(R.id.friends_list_favourite_star);
+
+                if (GetImageResource(imgIsFavourite) == R.drawable.ic_favorite_blue_48dp)
+                {
+                    imgIsFavourite.setImageResource(R.drawable.ic_favorite_border_blue_48dp);
+                    friendsList.get(position).IsFavourite = false;
+
+                    Toast.makeText(context, "Removed from favourites",
+                            Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    imgIsFavourite.setImageResource(R.drawable.ic_favorite_blue_48dp);
+                    friendsList.get(position).IsFavourite = true;
+                    Toast.makeText(context, "Added to favourites",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+    private int GetImageResource(ImageView imageView)
+    {
+        return (Integer)imageView.getTag();
+    }
     public void fillFriendsList()
     {
         friendsList.add(new FriendListModel("KevinMurphy", R.drawable.mickey_mouse_icon, true));

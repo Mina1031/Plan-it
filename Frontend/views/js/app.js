@@ -105,7 +105,7 @@ app.config(['$stateProvider',
             url: '/users',
             views: {
                 'generalView': {
-                    templateUrl: 'users.html'
+                    templateUrl: 'users.html', controller: 'SearchUserController'
                 }
             }
         })
@@ -113,7 +113,7 @@ app.config(['$stateProvider',
             url: '',
             views: {
                 'rightView': {
-                    templateUrl: 'users.profile.html'
+                    templateUrl: 'users.profile.html', controller:'UserProfileController'
                 }
             }
         })
