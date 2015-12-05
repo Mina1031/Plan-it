@@ -146,7 +146,7 @@ public class EventsListAdapter extends RecyclerView.Adapter<EventsListAdapter.Ev
     }
     @Override
     public void onBindViewHolder(EventsViewHolder eventsViewHolder, int i)
-    {
+    {//Amina leaving an event
         final int j = i;
         final Event event = mEvents.get(i);
         eventsViewHolder.bind(event);
@@ -155,12 +155,22 @@ public class EventsListAdapter extends RecyclerView.Adapter<EventsListAdapter.Ev
             @Override public void onClick(View v) {
                 Toast.makeText(context, mEvents.get(j).name,
                         Toast.LENGTH_LONG).show();
+                if(mEvents.get(j).isAttending == IsAttending.ATTENDING){
+                    mEvents.get(j).isAttending = IsAttending.INVITED;
+                        //removeFromEvent(j);
+                }
             }
         });
+
         eventsViewHolder.button2.setOnClickListener(new View.OnClickListener(){
             @Override public void onClick(View v) {
                 Toast.makeText(context,mEvents.get(j).description,
                         Toast.LENGTH_LONG).show();
+                if(mEvents.get(j).isAttending==IsAttending.INVITED);
+                {
+                    mEvents.get(j).isAttending = IsAttending.DECLINED;
+                }
+                   // removeFromEvent(j);
             }
         });
 
@@ -194,11 +204,21 @@ public class EventsListAdapter extends RecyclerView.Adapter<EventsListAdapter.Ev
         }
 
     }
+ /*   public void removeFromEvent(int i){
+        if(mEvents.get(i).isAttending==IsAttending.ATTENDING){
+
+        }
+
+         mEvents.get(i).isAttending = IsAttending.DECLINED;
+
+    }*/
+
     public void animateTo(List<Event> events) {
         applyAndAnimateRemovals(events);
         applyAndAnimateAdditions(events);
         applyAndAnimateMovedItems(events);
     }
+
 
     private void applyAndAnimateRemovals(List<Event> newEvents) {
         for (int i = mEvents.size() - 1; i >= 0; i--) {
