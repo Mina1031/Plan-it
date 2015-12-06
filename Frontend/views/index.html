@@ -22,8 +22,8 @@
 
 <div class="row" ng-controller="MainController">
 
-    <div class="col-md-2 user">
-        <a class="appname" ui-sref="/"><h1>Plan-It <small> v1.0</small></h1></a>
+    <div class="col-md-2 user" ng-if="isLogged">
+        <a class="appname" href="" ng-click="checkForUrl()"><h1>Plan-It <small> v1.0</small></h1></a>
         <hr style="height:1px; background-color:#666; margin-bottom:15px; margin-top:5px;">
         <!-- <h2><span class="glyphicon glyphicon-picture img-circle"></span></h2> -->
         <img src="http://topnews.in/light/files/Enrique-Iglesias_16.jpg" class="img-circle" width="100" height="100"><br><br>
@@ -32,7 +32,7 @@
         <button ui-sref="event" class="menu glyphicon glyphicon-list-alt"> Events</button>
         <button ui-sref="friends" class="menu glyphicon glyphicon-user"> Friends</button>
         <button ui-sref="account" class="menu glyphicon glyphicon-cog"> Account</button>
-        <button ng-click="testClick()" ui-sref="login" class="menu glyphicon glyphicon-off"> Logout</button>
+        <button ng-click="logout()" ui-sref="login" class="menu glyphicon glyphicon-off"> Logout</button>
 
     </div>
 

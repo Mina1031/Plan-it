@@ -21,7 +21,8 @@
         
         <button class="btn-block" ng-model="user" ui-sref="users.profile({ userID: user.UserID })">
           <!-- <span class="glyphicon glyphicon-user"></span> -->
-          {{user.friendlyName}}
+          {{user.firstName}} {{user.lastName}}
+          <br>{{user.friendlyName}}
         </button>
 
     </div>

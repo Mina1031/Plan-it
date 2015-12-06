@@ -5,7 +5,9 @@ var increment = require('mongoose-auto-increment');
 var config = require('./config');
 var eventjs = require('./models/event');
 var listjs = require('./models/list');
-var userjs = require('./models/user')
+var userjs = require('./models/user');
+var messagejs = require('./models/message');
+var messagesjs = require('./models/messages');
 
 database.createConnection = function() {
   mongoose.connect(config.db);
@@ -14,6 +16,7 @@ database.createConnection = function() {
   this.initListIncrement();
   this.initEventIncrement();
   this.initUserIncrement();
+  this.initMessageIncrement();
   db.on('error', console.error.bind(console, 'connection error:'));
   db.on('open', function() {
     console.log("connection made to database");
@@ -39,9 +42,18 @@ database.initListIncrement = function() {
 //Create autonumber field on UserID field in User model
 database.initUserIncrement = function(){
   userjs.plugin(increment.plugin, {
-    model: "User", field: "UserID", startAt: 1
-  }
-  );
+    model: "User",
+    field: "UserID",
+    startAt: 1
+  });
+};
+
+database.initMessageIncrement = function(){
+  messagejs.plugin(increment.plugin, {
+    model: "Message",
+    field: "MessageID",
+    startAt:1
+  });
 };
 
 //database.connection = db;
@@ -51,6 +63,10 @@ database.listModel = mongoose.model("List", listjs);
 database.eventModel = mongoose.model("Event", eventjs);
 //Create User model
 database.userModel = mongoose.model("User", userjs);
+//Create Message model
+database.messageModel = mongoose.model("Message", messagejs);
+//Create Message model
+database.messagesModel = mongoose.model("Messages", messagesjs);
 
 database.eventModel.calculateEst = function(eventid, callback) {
     console.log('event id is: ' + eventid);
@@ -73,4 +89,29 @@ database.eventModel.calculateEst = function(eventid, callback) {
       }
       callback(result);
     });
-  }
+}
+
+database.messagesModel.messageList = function(msgid, eventid, callback){
+    console.log('msg id is: ' + msgid);
+    database.messagesModel.aggregate([
+      {$match : { EventID : eventid}},
+      {$unwind: '$messages'},
+      {$match : {'messages.MessageID' : { $gte : msgid}}},
+      {$group : {_id:null,
+        messages : {
+          $push : {
+            'MessageID' :'$messages.MessageID',
+            'Message' :'$messages.message',
+            'userID' : '$messages.userID',
+            'time' : '$messages.time'
+            }
+        }
+      }
+    }],function(err, result){
+      if (err) {
+        console.log(err);
+        return;
+      }
+      callback(result);
+    });
+}

@@ -7,12 +7,12 @@
     </div>
 
     <div class="row">
-        <h2>Kevin Murphy
-        <br><small>@kmurphy</small></h2>
+        <h2>{{user.firstName}} {{user.lastName}}
+        <br><small>@{{user.friendlyName}}</small></h2>
     </div>
 
     <div class="row">
-        <button type="submit" class="btn btn-lg btn-default">Unfriend</button>
+        <button class="btn btn-lg btn-default" ng-click="removeFriend()">Unfriend</button>
     </div>
 
 </div>

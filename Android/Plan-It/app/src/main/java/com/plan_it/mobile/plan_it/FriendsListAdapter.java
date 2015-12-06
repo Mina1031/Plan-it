@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -64,27 +63,6 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
             friend.imgIsFavourite.setImageResource(R.drawable.ic_favorite_border_blue_48dp);
             friend.imgIsFavourite.setTag(R.drawable.ic_favorite_border_blue_48dp);
         }
-
-        friend.imgIsFavourite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(GetImageResource(friend.imgIsFavourite) == R.drawable.ic_favorite_border_blue_48dp)
-                {
-                    friend.imgIsFavourite.setImageResource(R.drawable.ic_favorite_blue_48dp);
-                    friendsList.get(i).IsFavourite = true;
-                    Toast.makeText(context, "Added to favourites",
-                            Toast.LENGTH_LONG).show();
-                }
-                else
-                {
-                    friend.imgIsFavourite.setImageResource(R.drawable.ic_favorite_border_blue_48dp);
-                    friendsList.get(i).IsFavourite = false;
-
-                    Toast.makeText(context, "Removed from favourites",
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-        });
 
         return rowView;
     }

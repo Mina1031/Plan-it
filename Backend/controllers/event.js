@@ -20,7 +20,8 @@ event.createEvent = function(req, res, next) {
     else{
       //set the user as the event owner
       event.members.push({UserId: parseInt(token.UserID), isAttending: "Owner"});
-      //save the event to the user model
+
+
       //save the event
       event.save(function(err, result) {
         if (err)
@@ -28,6 +29,15 @@ event.createEvent = function(req, res, next) {
         else{
           token.events.push({eventID: result.EventID});
           token.save();
+
+          var messages = new database.messagesModel({
+            "EventID": result.EventID
+          });
+
+          messages.save(function(err, result){
+            if(err)
+              console.log(err);
+          });
           res.sendStatus(201);
         }
       });
@@ -154,14 +164,21 @@ event.getListItems = function(req, res, next) {
 
 event.claimItem = function(req, res, next){
   //console.log("req params: " + JSON.stringify(req.params, 4, null));
-  database.eventModel.update({"itemList.ListID" : req.params.item, "EventID" : req.params.id},
-  {$set : { "itemList.$.whoseBringing": 2}},
-  function(err, item){
+  database.userModel.findOne({token: req.headers["x-access-token"]}, function(err, result){
     if(err)
       console.log(err);
-    else
-      res.sendStatus(201);
-    });
+    else{
+      console.log(result);
+      database.eventModel.update({"itemList.ListID" : req.params.item, "EventID" : req.params.id},
+      {$set : { "itemList.$.whoseBringing": result.UserID}},
+      function(err, item){
+        if(err)
+          console.log(err);
+        else
+          res.sendStatus(201);
+      });
+    }
+  });
 }
 
 event.deleteItem = function(req, res, next){
@@ -171,9 +188,12 @@ event.deleteItem = function(req, res, next){
     if(err)
       console.log(err);
     else
+      console.log(JSON.stringify(item,4,null));
       database.eventModel.calculateEst(req.params.id, function(result) {
-        item.totalEstCost = result[0].estCost;
-        item.totalActCost = result[0].actCost;
+        console.log(JSON.stringify(result,4,null));
+
+        item.totalEstCost = result.estCost;
+        item.totalActCost = result.actCost;
         item.save(function(err) {
           if (err)
             console.log(err);

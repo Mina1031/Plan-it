@@ -18,6 +18,15 @@
         </div>
         <span class="error" ng-show="register_form.email.$error.required && register_form.submitted">Email is required.</span>
 
+        <label for="firstName" class="col-md-3 control-label">First Name</label>
+        <div class="col-md-7">
+          <input type="text" class="form-control" id="firstName" name="firstName" placeholder="First Name" ng-model="user.firstName" required />
+        </div>
+        <label for="lastName" class="col-md-3 control-label">Last Name</label>
+        <div class="col-md-7">
+          <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Last Name" ng-model="user.lastName" required />
+        </div>
+
         <label for="friendlyName" class="col-md-3 control-label">Username</label>
         <div class="col-md-7">
           <input type="text" class="form-control" id="friendlyName" name="friendlyName" placeholder="Enter a unique username" ng-model="user.friendlyName" required />

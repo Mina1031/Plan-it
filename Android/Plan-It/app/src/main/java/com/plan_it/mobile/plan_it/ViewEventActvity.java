@@ -566,6 +566,7 @@ public class ViewEventActvity extends Activity{
                 }
             }
         });
+
     }
 
     public void navItemList(View v)

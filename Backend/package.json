@@ -12,9 +12,7 @@
     "cors": "^2.7.1",
     "express": "^4.13.3",
     "jsonwebtoken": "^5.4.1",
-    "mongoose-auto-increment": "latest",
-    "socket.io": "^1.3.7",
-    "socketio-jwt": "^4.3.3"
+    "mongoose-auto-increment": "latest"
   },
   "devDependencies": {},
   "scripts": {

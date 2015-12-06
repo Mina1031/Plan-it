@@ -1,11 +1,11 @@
 //Load mongoose model and Schema
 var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
 //Load Database Configuration file
-var database = require('../database');
+var message = require('./message');
 
-var messagesSchema = new Schema({
-    events: [{ message: String, eventID: Number, userID: Number, time: {type: Date, default: Date.now} }]}
-);
+var messageList = new mongoose.Schema({
+  EventID: Number,
+  messages: [message]
+});
 
-module.exports = messagesSchema;
+module.exports = messageList;

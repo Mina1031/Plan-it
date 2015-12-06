@@ -20,89 +20,18 @@
 <div class="row">
     <div class="col-md-5 contacts">
 
-        <button class="btn-block" ng-model="userList">
-          <!-- <span class="glyphicon glyphicon-user"></span> -->
-          {{userList.friendlyName}}
+        <button class="btn-block" ng-repeat="friend in friendList" ui-sref="friends.profile({ userID: friend.UserID })">
+          <!-- <span class="glyphicon glyphicon-camera"></span> -->
+          {{friend.firstName}} {{friend.lastName}}
+          <br>{{friend.friendlyName}}
         </button>
 
-        <button ui-sref="friends.profile" class="btn-block" float="right">
+<!--         <button ui-sref="friends.profile" class="btn-block" float="right">
             <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
             Kevin Murphy
             <br>@kmurphy
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            Kamran Syed
-            <br>@ksyed
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            Kristian Castaneda
-            <br>@kcastaneda
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            Joanne Tanson
-            <br>@jtanson
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            Luke Farnell
-            <br>@lfarnell
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            Mohammed Sumon
-            <br>@msumon
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            Amina Abbasi
-            <br>@aabbasi
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            First Last
-            <br>@username
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            First Last
-            <br>@username
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            First Last
-            <br>@username
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            First Last
-            <br>@username
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            First Last
-            <br>@username
-        </button>
-        <button class="btn-block" float="right">
-            <span class="glyphicon glyphicon-user"></span>
-            <!-- <img src="" class="img-circle" />-->
-            First Last
-            <br>@username
-        </button>
+        </button> -->
+       
     </div>
     
     <div class="col-md-5 col-md-offset-1">
