@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.plan_it.mobile.plan_it.AddFriendActivity">
+
+    <item android:id="@+id/action_search_friend"
+        android:title="@string/action_search"
+        android:icon="@drawable/ic_search_blue_24dp"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
+
+</menu>

@@ -7,6 +7,7 @@ var event = new mongoose.Schema({
   members: [{
     _id : false,
     UserId: Number,
+    friendlyName: String,
     isAttending: { type: String, enum: ['Invited', 'Attending', 'Declined', 'Left', 'Owner'] },
     Nofications: [{
         itemList: Boolean,

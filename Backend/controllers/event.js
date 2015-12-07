@@ -19,7 +19,7 @@ event.createEvent = function(req, res, next) {
       console.log(err);
     else{
       //set the user as the event owner
-      event.members.push({UserId: parseInt(token.UserID), isAttending: "Owner"});
+      event.members.push({UserId: parseInt(token.UserID), friendlyName : token.friendlyName, isAttending: "Owner"});
 
 
       //save the event
@@ -83,6 +83,16 @@ event.getUsersEvents = function(req, res, next) {
       });
     }
   });
+}
+
+event.getMembersByEventId = function(req, res, next){
+  database.eventModel.findOne({"EventID" : req.params.id}, function(err, event){
+    if(err)
+      console.log(err);
+    else{
+      res.status(200).json(event.members);
+    }
+  })
 }
 
 event.updateEvent = function(req, res, next) {
@@ -209,17 +219,22 @@ event.updateItem = function(req, res, next){
     if(err)
       console.log(err);
     else{
-      console.log(result.itemList[0]);
       result.itemList[0].ListID = result.itemList[0].ListID;
       result.itemList[0].item = req.body.item || result.itemList[0].item;
       result.itemList[0].actCost = req.body.actCost || result.itemList[0].actCost;
       result.itemList[0].estCost = req.body.estCost || result.itemList[0].estCost;
-      result.save(function(err, result){
-        if(err)
-          console.log(err);
-        else{
-          res.sendStatus(200);
-        }
+
+      database.eventModel.calculateEst(parseInt(req.params.id), function(item) {
+        result.totalEstCost = item[0].estCost;
+        result.totalActCost = item[0].actCost;
+
+        result.save(function(err, saved){
+          if(err)
+            console.log(err);
+          else{
+            res.json(saved);
+          }
+        });
       });
     }
   });
@@ -231,18 +246,31 @@ event.inviteFriend = function(req, res, next){
     if(err)
       console.log(err);
     else{
-      database.userModel.findOne({"UserID" : req.params.friendId}, function(err, result){
+      database.userModel.findOne({"UserID" : req.params.friendId}, function(err, user){
         if(err)
           console.log(err);
         else{
-          event.members.push({UserId: result.UserID, isAttending: "Invited"});
-          event.save(function(err){
+          database.eventModel.findOne({$and:[{"EventID": req.params.id},{"members.UserId": user.UserID}]}, function(err, member){
             if(err)
               console.log(err);
+            else{
+
+              if(member){
+                res.status(409).send("member is already invited to the event");
+              }
+              else{
+                event.members.push({UserId: user.UserID, friendlyName : user.friendlyName, isAttending: "Invited"});
+                event.save(function(err){
+                  if(err)
+                    console.log(err);
+                  else
+                    res.sendStatus(200);
+                });
+              }
+            }
           });
         }
       });
-      res.sendStatus(200);
     }
   });
 }

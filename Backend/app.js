@@ -30,6 +30,7 @@ app.post('/events/:id/list/:item', eventCtrl.claimItem);
 app.delete('/events/:id/list/:item', eventCtrl.deleteItem);
 app.put('/events/:id/list/:item', eventCtrl.updateItem);
 app.post("/events/:id/list", eventCtrl.createListItem);
+app.get('/events/:id/members', eventCtrl.getMembersByEventId);
 app.post("/user/:id/friend", userCtrl.addNewFriend);
 app.get("/user/:id/friend", userCtrl.getAllFriends);
 app.get("/search/:id/user", userCtrl.findUserByID);
@@ -40,6 +41,7 @@ app.post("/login", userCtrl.loginUser);
 app.get('/events/:id([0-9]*$)', eventCtrl.getEventById);
 app.post('/message/:event', msgCtrl.createMessage);
 app.get('/message/:event/id/:msgid', msgCtrl.getAllMessagesSinceID);
+
 
 app.listen(3000, function() {
   console.log("Server is running on port 3000");

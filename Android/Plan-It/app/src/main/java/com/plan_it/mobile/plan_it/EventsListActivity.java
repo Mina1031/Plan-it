@@ -280,5 +280,5 @@ public class EventsListActivity extends AppCompatActivity implements SearchView.
     {
         Intent intent = new Intent(this, CreateEventActivity.class);
         startActivity(intent);
-    }   
+    }
 }

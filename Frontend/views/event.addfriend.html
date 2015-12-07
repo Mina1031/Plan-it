@@ -1,0 +1,11 @@
+<div class="row">
+
+  <div class="row" ng-repeat="friend in friendList">
+    <!-- <span class="glyphicon glyphicon-camera"></span> -->
+    {{friend.firstName}} {{friend.lastName}}
+    <br>{{friend.friendlyName}}
+    <button class="btn btn-sm btn-danger btn-block" ng-click=inviteFriend(friend.UserID)>
+      Invite Friend
+    </button>
+  </div>
+</div>

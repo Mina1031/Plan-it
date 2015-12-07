@@ -11,15 +11,31 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <TextView
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_weight=".07"
+        android:layout_height="match_parent"
+        android:id="@+id/item_list_delete_button"
+        android:src="@drawable/ic_delete_grey_24dp"/>
+    <EditText
         android:gravity="center_vertical|left"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight=".3"
+        android:layout_weight=".29"
         android:text="@string/item"
         android:id="@+id/item_list_text_item"
         android:padding="2dp"
+        android:imeOptions="actionDone"
+        android:singleLine="true"
         android:textSize="12sp"/>
+    <ImageView
+        android:layout_gravity="center_vertical|right"
+        android:clickable="true"
+        android:layout_width="0dp"
+        android:layout_weight=".05"
+        android:layout_height="match_parent"
+        android:id="@+id/item_list_edit_itemname"
+        android:src="@drawable/ic_edit_blue_24dp"/>
         <TextView
             android:layout_width="0dp"
             android:layout_weight=".3"
@@ -31,13 +47,14 @@
             android:textSize="12sp"
             android:visibility="visible"
             android:clickable="true"/>
-
-        <TextView
+        <EditText
             android:gravity="center_vertical|left"
             android:layout_width="0dp"
-            android:layout_weight=".15"
+            android:layout_weight=".10"
             android:layout_height="match_parent"
             android:text="@string/estimated_cost"
+            android:imeOptions="actionDone"
+            android:singleLine="true"
             android:id="@+id/item_list_text_estimated_cost"
             android:padding="2dp"
             android:textSize="12sp"/>
@@ -50,12 +67,14 @@
             android:id="@+id/item_list_estimated_cost_edit"
             android:src="@drawable/ic_edit_blue_24dp"/>
 
-        <TextView
+        <EditText
             android:gravity="center_vertical|left"
             android:layout_width="0dp"
-            android:layout_weight=".15"
+            android:layout_weight=".10"
             android:layout_height="match_parent"
             android:text="@string/actual_cost"
+            android:imeOptions="actionDone"
+            android:singleLine="true"
             android:id="@+id/item_list_text_actual_cost"
             android:padding="2dp"
             android:textSize="12sp"/>

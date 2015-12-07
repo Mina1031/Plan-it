@@ -172,11 +172,8 @@ nav {
   border-collapse: collapse;
   width: 95%;
 }
-.items th:first-child, td:first-child {
-  width: 120%;
-}
 .items th, td input {
-  width: 90%;
+  width: 95%;
 }
 
 /* CONTACT LIST */

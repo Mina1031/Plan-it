@@ -11,10 +11,7 @@
 
 <!-- Change to filter instead -->
 <div class="row searchfriend">
-    <form id="searchUser" novalidate ng-submit="searchUser()">
-        <input type="text" ng-model="user.search" placeholder="Search for friends by Email or Username" class="form-control">
-        <input class="btn btn-primary" type="submit" ng-click="" value="Search">
-    </form>
+   <input type="text" ng-model="filter" ng-change="filterFriendList()" placeholder="Search for friends by Email or Username" class="form-control">     
 </div>
 
 <div class="row">

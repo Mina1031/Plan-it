@@ -69,8 +69,9 @@ database.messageModel = mongoose.model("Message", messagejs);
 database.messagesModel = mongoose.model("Messages", messagesjs);
 
 database.eventModel.calculateEst = function(eventid, callback) {
-    console.log('event id is: ' + eventid);
-    database.eventModel.aggregate([{
+    database.eventModel.aggregate([
+      {$match : { EventID : eventid}},
+      {
       $unwind: "$itemList"
     }, {
       $group: {

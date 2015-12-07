@@ -87,7 +87,8 @@
             android:text="@string/add_item"
             android:textStyle="bold"
             android:id="@+id/item_list_add_item_button"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            android:onClick="addItem"/>
         <TextView
             android:background="@drawable/back"
             android:padding="5dp"

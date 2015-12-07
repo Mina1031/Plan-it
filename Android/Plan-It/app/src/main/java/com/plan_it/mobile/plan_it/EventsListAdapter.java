@@ -204,9 +204,8 @@ public class EventsListAdapter extends RecyclerView.Adapter<EventsListAdapter.Ev
                 else if ( mEvents.get(j).isAttending == IsAttending.DECLINED || mEvents.get(j).isAttending == IsAttending.LEFT || mEvents.get(j).isAttending == IsAttending.OWNER)
                 {
                     UpdateDatabase.DeleteEvent(mEvents.get(j).isAttending.toString(), mEvents.get(j).eventID);
-                    Toast.makeText(context, "Deleting: " + mEvents.get(j).name,
+                    Toast.makeText(context, "Deleting: " + mEvents.get(j).name + " Refresh List from menu",
                             Toast.LENGTH_LONG).show();
-
                 }
 
 >>>>>>> 9b858dc1e46bcae5e2a59f731a5ea610009379b1
@@ -224,10 +223,8 @@ public class EventsListAdapter extends RecyclerView.Adapter<EventsListAdapter.Ev
             eventsViewHolder.button2.setImageResource(R.drawable.ic_thumb_down_red_24dp);
             eventsViewHolder.cv.setCardBackgroundColor(Color.argb(125, 155, 255, 118));
         }
-        else if(mEvents.get(i).isAttending == IsAttending.LEFT || mEvents.get(i).isAttending == IsAttending.OWNER)
+        else if(mEvents.get(i).isAttending == IsAttending.LEFT)
         {
-            eventsViewHolder.button1.setImageResource(R.drawable.ic_photo_library_blue_24dp);
-            eventsViewHolder.button2.setImageResource(R.drawable.ic_delete_grey_24dp);
             eventsViewHolder.cv.setCardBackgroundColor(Color.argb(125, 255, 191, 92));
         }
         else if(mEvents.get(i).isAttending == IsAttending.DECLINED)
@@ -238,6 +235,8 @@ public class EventsListAdapter extends RecyclerView.Adapter<EventsListAdapter.Ev
         }
         else
         {
+            eventsViewHolder.button1.setImageResource(R.drawable.ic_photo_library_blue_24dp);
+            eventsViewHolder.button2.setImageResource(R.drawable.ic_delete_grey_24dp);
             eventsViewHolder.cv.setCardBackgroundColor(Color.argb(125, 255, 254, 199));
         }
 

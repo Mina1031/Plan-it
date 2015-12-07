@@ -1,4 +1,4 @@
-<div class="row" ng-controller="eventItemsController">
+<div class="row">
 
     <div style="text-align:right;">
         <h2>Total: <small>$249.75</small></h2>
@@ -8,40 +8,26 @@
 
     <table class="items">
     <tr>
-        <th>Items</th>
-        <th>Qty</th>
-        <th>Expected Cost</th>
-        <th>Actual Cost</th>
+        <th style="width:30%">Items</th>
+        <th style="width:20%">Who is Supplying</th>
+        <th style="width:15%">Expected Cost</th>
+        <th style="width:15%">Actual Cost</th>
+        <th style="width:12%"></th>
+        <th style="width:10%"></th>
+    </tr><tr ng-repeat="items in itemList">
+        <td><input type="text" ng-model="items.item"></td>
+        <td><input type="text" ng-model="items.whoseBringing"></td>
+        <td><input type="text" ng-model="items.estCost"></td>
+        <td><input type="text" ng-model="items.actCost"></td>
+        <td><button class="btn btn-sm btn-default" ng-click="updateItem(items)">Update</button></td>
+        <td><button class="btn btn-sm btn-default" ng-click="deleteItem(items)">Delete</button></td>
     </tr><tr>
-        <!-- <td><span class="input-group-addon"><input type="checkbox"> Tent</span></td> -->
-        <td>Tent</td>
-        <td><input type="text" value="2"></td>
-        <td><input type="text" value="$110.00"></td>
-        <td><input type="text" value="86.00"></td>
-    </tr><tr>
-        <!-- <td><span class="input-group-addon"><input type="checkbox"> Firewood</span></td> -->
-        <td>Firewood</td>
-        <td><input type="text" value="20"></td>
-        <td><input type="text" value="$50.00"></td>
-        <td><input type="text" value="$31.00"></td>
-    </tr><tr>
-        <!-- <td><span class="input-group-addon"><input type="checkbox"> Hotdogs</span></td> -->
-        <td>Hotdogs</td>
-        <td><input type="text" value="5 packs"></td>
-        <td><input type="text" value="$40.00"></td>
-        <td><input type="text" value="$28.00"></td>
-    </tr><tr>
-        <!-- <td><span class="input-group-addon"><input type="checkbox"> Beer</span></td> -->
-        <td>Beer</td>
-        <td><input type="text" value="5 cases"></td>
-        <td><input type="text" value="$110.00"></td>
-        <td><input type="text" value="$104.75"></td>
-    </tr><tr>
-        <!-- <td><span class="input-group-addon"><input type="checkbox"> (Add Item)</span></td> -->
-        <td><input type="text" placeholder="Add Item"></td>
-        <td><input type="text" placeholder=""></td>
-        <td><input type="text" placeholder=""></td>
-        <td><input type="text" placeholder=""></td>
+        <td><input type="text" ng-model="newItem.item" placeholder="Add item"></td>
+        <td><input type="text" ng-model="newItem.whoseBringing" placeholder="Who's bringing?"></td>
+        <td><input type="text" ng-model="newItem.estCost" placeholder="Estimated"></td>
+        <td><input type="text" ng-model="newItem.actCost" placeholder="Actual"></td>
+        <td><button class="btn btn-sm btn-default" ng-click="addItem()">Add</button></td>
+        <td></td>
     </tr>
     </table>
 

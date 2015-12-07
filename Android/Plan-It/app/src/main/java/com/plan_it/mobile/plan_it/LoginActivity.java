@@ -31,7 +31,7 @@ import cz.msebera.android.httpclient.Header;
 public class LoginActivity extends AppCompatActivity {
 
         public static String token;
-        public int userID;
+        public static int userID;
         String user;
         String password;
 
@@ -103,6 +103,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     res = response;
                     token = res.getString("token");
+                    userID = res.getInt("userID");
                     Log.d("debug", res.getString("token"));
                     Intent intent = new Intent(LoginActivity.this, EventsListActivity.class);
                     startActivity(intent);

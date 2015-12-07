@@ -2,6 +2,7 @@ package com.plan_it.mobile.plan_it;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -37,7 +38,9 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class ViewEventActvity extends Activity{
@@ -78,8 +81,10 @@ public class ViewEventActvity extends Activity{
 
     Calendar myCalendar = Calendar.getInstance();
 
+    public ArrayList<Members> mList = new ArrayList<>();
     ListView attendeeList;
-    String[] attendeeName = {
+    Context context = this;
+    /*String[] attendeeName = {
             "Kristian",
             "Joanne",
             "Kevin",
@@ -106,7 +111,7 @@ public class ViewEventActvity extends Activity{
             R.drawable.ic_thumb_up_green_24dp,
             R.drawable.ic_thumb_up_green_24dp,
             R.drawable.ic_thumb_up_green_24dp
-    };
+    };*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,11 +135,14 @@ public class ViewEventActvity extends Activity{
         btnNotGoing = (Button)findViewById(R.id.btnDecline);
         deleteEvent = (Button)findViewById(R.id.btnViewDeleteEvent);
 
+        populateAttendee();
 
+        attendeeList = (ListView)findViewById(R.id.attendee_list);
+        attendeeList.setAdapter(new AttendeeListAdapter(this, R.layout.attendee_list, mList));
 
-        AttendeeListAdapter adapter = new AttendeeListAdapter(this, attendeeName, imgid, imgStatus);
+       /* AttendeeListAdapter adapter = new AttendeeListAdapter(this, attendeeName, imgid, imgStatus);
         attendeeList = (ListView)findViewById(android.R.id.list);
-        attendeeList.setAdapter(adapter);
+        attendeeList.setAdapter(adapter);*/
 
         btnLoadImg = (Button)findViewById(R.id.btnChngPic);
         eventImage = (ImageView)findViewById(R.id.ivViewEventImage);
@@ -153,6 +161,16 @@ public class ViewEventActvity extends Activity{
         if(status == IsAttending.ATTENDING){isAttending();}
         else if(status == IsAttending.INVITED || status == IsAttending.DECLINED || status == IsAttending.LEFT){isInvited();}
         else if(status == IsAttending.OWNER){isOwner();}
+    }
+
+    public void populateAttendee(){
+        mList.add(new Members(1,"KristianCastaneda",MemberStatus.OWNER,true, true));
+        mList.add(new Members(2,"JoanneTanson",MemberStatus.ATTENDING,true, true));
+        mList.add(new Members(3,"KevinMurphy",MemberStatus.ATTENDING,true, true));
+        mList.add(new Members(4,"LukeFarnell",MemberStatus.INVITED,false, false));
+        mList.add(new Members(5,"KamranSyed",MemberStatus.INVITED,false, false));
+        mList.add(new Members(6,"MoSumon",MemberStatus.DECLINED,false, false));
+        mList.add(new Members(7,"AminaAbbasi",MemberStatus.LEFT,false, false));
     }
 
     public void getBundleValues(){
@@ -413,6 +431,7 @@ public class ViewEventActvity extends Activity{
         etToDate.setFocusable(false);
 
         btnLoadImg.setVisibility(View.INVISIBLE);
+
     }
     public void isInvited(){
 
@@ -434,7 +453,6 @@ public class ViewEventActvity extends Activity{
 
         btnGoing.setVisibility(View.VISIBLE);
         btnNotGoing.setVisibility(View.VISIBLE);
-
     }
 
     public void isOwner() {
@@ -568,10 +586,11 @@ public class ViewEventActvity extends Activity{
         });
 
     }
-
     public void navItemList(View v)
     {
         Intent intent = new Intent(this, ItemListActivity.class);
+        intent.putExtra("token", LoginActivity.token);
+        intent.putExtra("eventID", eventID);
         startActivity(intent);
     }
 
