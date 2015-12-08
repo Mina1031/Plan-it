@@ -35,6 +35,10 @@ public class ItemListActivity extends AppCompatActivity {
     String token;
     public static int eventID;
     String friendlyName;
+    String claimer;
+    String itemName;
+    String actCost;
+    String estCost;
 
     void initializeData()
     {
@@ -94,6 +98,8 @@ public class ItemListActivity extends AppCompatActivity {
         });
         dialog.show();
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -212,5 +218,73 @@ public class ItemListActivity extends AppCompatActivity {
             }
 
         });
+    }
+    public String getUserName() {
+        RestClient.get("/search/" + LoginActivity.userID + "/user", null, LoginActivity.token, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                // If the response is JSONObject instead of expected JSONArray
+                JSONObject res;
+                String userName;
+                try {
+                    res = response;
+                    userName = res.getString("friendlyName");
+                    claimer = userName;
+
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] header, Throwable throwable, JSONObject response) {
+                Toast.makeText(getApplicationContext(), "GET USERNAME FAIL", Toast.LENGTH_LONG).show();
+            }
+
+        });
+        return claimer;
+    }
+
+    public void claimItem(int id) throws JSONException{
+
+        RestClient.post("events/" + ItemListActivity.eventID + "/claim/" + id, null, LoginActivity.token, new JsonHttpResponseHandler() {
+            public void onSuccess(String response) {
+                JSONObject res;
+                try {
+                    res = new JSONObject(response);
+                    Log.d("debug", res.getString("some_key")); // this is how you get a value out
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+    public void updateListItem(String change, int id) throws JSONException{
+        RequestParams updatedData = new RequestParams();
+        if(change == itemName){
+            updatedData.put("item",itemName);
+        }
+        else if(change == estCost){
+            updatedData.put("estCost",Double.parseDouble(estCost));
+        }
+        else if(change == actCost){
+            updatedData.put("actCost",Double.parseDouble(actCost));
+        }
+
+        RestClient.put("events/" + ItemListActivity.eventID + "/list/" + id, updatedData, LoginActivity.token, new JsonHttpResponseHandler() {
+            public void onSuccess(String response) {
+                JSONObject res;
+                try {
+                    res = new JSONObject(response);
+                    Log.d("debug", res.getString("some_key")); // this is how you get a value out
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 }

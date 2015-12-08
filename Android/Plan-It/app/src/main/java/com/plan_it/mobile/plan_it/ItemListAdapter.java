@@ -47,28 +47,28 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemLi
     String itemName;
     String provider;
     String claimer;
-    EditText itemText;
-    TextView whoseBringing;
-    EditText estCostText;
-    EditText actCostText;
-    ImageView editEstCostButton;
-    ImageView editActCostButton;
-    ImageView deleteItem;
+    int itemId;
     ImageView editItemButton;
-    ImageView claimButton;
 
     public class ItemListViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
-
+        TextView whoseBringing;
+        EditText estCostText;
+        EditText actCostText;
+        ImageView editEstCostButton;
+        ImageView editActCostButton;
+        ImageView deleteItem;
+        EditText itemText;
+        TextView itemIdentity;
+        int itemIdentifier;
+        ImageView claimButton;
         String currency = "$";
-        int itemId;
-
-
         public ItemListViewHolder(final View itemView) {
             super(itemView);
             deleteItem = (ImageView) itemView.findViewById(R.id.item_list_delete_button);
             cv = (CardView) itemView.findViewById(R.id.item_list_card_view);
             itemText = (EditText) itemView.findViewById(R.id.item_list_text_item);
+            itemIdentity =(TextView) itemView.findViewById(R.id.item_list_id);
             whoseBringing = (TextView) itemView.findViewById(R.id.item_list_text_supplying);
             estCostText = (EditText) itemView.findViewById(R.id.item_list_text_estimated_cost);
             actCostText = (EditText) itemView.findViewById(R.id.item_list_text_actual_cost);
@@ -76,91 +76,13 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemLi
             editActCostButton = (ImageView) itemView.findViewById(R.id.item_list_actual_cost_edit);
             editItemButton = (ImageView) itemView.findViewById(R.id.item_list_edit_itemname);
             view = itemView;
-            whoseBringing.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v) {
-                    try {
-                        whoseBringing.setText(getUserName());
-                        claimItem(itemId);
-                        Toast.makeText(view.getContext(), "CLAIMED", Toast.LENGTH_LONG).show();
-                    } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            });
-            deleteItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        deleteItem(itemId);
-                        Toast.makeText(view.getContext(), "DELETED", Toast.LENGTH_LONG).show();
-                    } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            });
-            itemText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        try {
-                            itemName = itemText.getText().toString();
-                            updateListItem(itemName, itemId);
-                            Toast.makeText(view.getContext(), "Successfully Updated", Toast.LENGTH_LONG).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        return true;
-                    }
-                    return false;
-                }
-            });
-            estCostText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-
-                        try {
-                            estCost = estCostText.getText().toString();
-                            updateListItem(estCost, itemId);
-                            Toast.makeText(view.getContext(), "Successfully Updated", Toast.LENGTH_LONG).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        return true;
-                    }
-                    return false;
-                }
-            });
-            actCostText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-
-                        try {
-                            actCost = actCostText.getText().toString();
-                            updateListItem(actCost, itemId);
-                            Toast.makeText(view.getContext(), "Successfully Updated", Toast.LENGTH_LONG).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        return true;
-                    }
-                    return false;
-                }
-            });
-
         }
 
         public void bind(Item item){
             itemId = item.listID;
             itemText.setText(item.item);
             provider = item.providing;
+            itemIdentity.setText(String.valueOf(itemId));
             whoseBringing.setText(provider);
             estCostText.setText(Double.toString(item.estCost));
             actCostText.setText(Double.toString(item.actCost));
@@ -184,7 +106,6 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemLi
                 }
 
             }
-
             @Override
             public void onFailure(int statusCode, Header[] header, Throwable throwable, JSONObject response) {
                 Toast.makeText(view.getContext(), "GET USERNAME FAIL", Toast.LENGTH_LONG).show();
@@ -273,7 +194,89 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemLi
 
     @Override
     public void onBindViewHolder(ItemListViewHolder holder, int i) {
-        final Item item = mItems.get(i);
-        holder.bind(item);
+        final ItemListViewHolder itemHolder = holder;
+        final int j = i;
+        final Item item = mItems.get(j);
+        itemHolder.bind(item);
+
+        itemHolder.itemIdentifier = Integer.valueOf(itemHolder.itemIdentity.getText().toString());
+
+        itemHolder.whoseBringing.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                    try {
+                        itemHolder.whoseBringing.setText(getUserName());
+                        claimItem(itemHolder.itemIdentifier);
+                        Toast.makeText(view.getContext(), "CLAIMED", Toast.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+        });
+        itemHolder.deleteItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    deleteItem(itemHolder.itemIdentifier);
+                    Toast.makeText(view.getContext(), "DELETED", Toast.LENGTH_LONG).show();
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        });
+        itemHolder.itemText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event){
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    try {
+                        itemName = itemHolder.itemText.getText().toString();
+                        updateListItem(itemName, itemHolder.itemIdentifier);
+                        Toast.makeText(view.getContext(), "Successfully Updated", Toast.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    return true;
+                }
+                return false;
+            }
+        });
+        itemHolder.estCostText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+
+                    try {
+                        estCost = itemHolder.estCostText.getText().toString();
+                        updateListItem(estCost, itemHolder.itemIdentifier);
+                        Toast.makeText(view.getContext(), "Successfully Updated", Toast.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    return true;
+                }
+                return false;
+            }
+        });
+        itemHolder.actCostText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    try {
+                        actCost = itemHolder.actCostText.getText().toString();
+                        updateListItem(actCost, itemHolder.itemIdentifier);
+                        Toast.makeText(view.getContext(), "Successfully Updated", Toast.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
+
     }
 }
