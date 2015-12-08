@@ -184,6 +184,11 @@ nav {
 }
 .items th, td input {
   width: 95%;
+  text-align: center;
+}
+.numdivide {
+  /*float: right;*/
+  width: 60px;
 }
 
 /* CONTACT LIST */

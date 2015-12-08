@@ -365,19 +365,15 @@ angular.module('controller', [])
       $scope.actualTotal = parseFloat(actualCost);
       $scope.estimatedTotal = parseFloat(estimatedCost);
     }
+    
+    $scope.divideTotal = function (num) {
+      $scope.actualSplit = parseFloat(actualCost/num).toFixed(2);
+      $scope.estimatedSplit = parseFloat(estimatedCost/num).toFixed(2);
+    }
+    
 
   }
   );
-
-  $scope.calculateTotal = function () {
-
-
-    // //add to total at every row
-    // actualCost = actualCost + toClaim.actCost;
-    // console.log(actualCost);
-    // $scope.actualTotal = parseInt(actualCost, 10);
-  }
-
 
   $scope.checkClaimed = function (toClaim) {
 
