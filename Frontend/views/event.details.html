@@ -30,13 +30,22 @@
 
         <h3>Who <small>is coming</small></h3>
         <div class="invitee">
-        <span style="padding-left:40px;" class="glyphicon glyphicon-star"></span> Joanne Tanson<br>
+
+        <div style="padding-left:40px;" ng-repeat="member in memberList">
+        <span class="glyphicon glyphicon-star" ng-show="checkOwner(member)"></span>
+        <span class="glyphicon glyphicon-envelope" ng-show="checkInvited(member)"></span>
+        <span class="glyphicon glyphicon-thumbs-up" ng-show="checkAttending(member)"></span>
+        <span class="glyphicon glyphicon-thumbs-down" ng-show="checkDeclined(member)"></span>
+        <span class="glyphicon glyphicon-remove" ng-show="checkLeft(member)"></span> {{member.friendlyName}}</div>
+
+        <br>
+        <!-- <span style="padding-left:40px;" class="glyphicon glyphicon-star"></span> Joanne Tanson<br>
         <span style="padding-left:40px;" class="glyphicon glyphicon-thumbs-down"></span> Amina Abbasi<br>
         <span style="padding-left:40px;" class="glyphicon glyphicon-thumbs-up"></span> Kamran Syed<br>
         <span style="padding-left:40px;" class="glyphicon glyphicon-thumbs-up"></span> Kevin Murphy<br>
         <span style="padding-left:40px;" class="glyphicon glyphicon-thumbs-up"></span> Kristian Castaneda<br>
         <span style="padding-left:40px;" class="glyphicon glyphicon-thumbs-down"></span> Luke Farnell<br>
-        <span style="padding-left:40px;" class="glyphicon glyphicon-thumbs-up"></span> Mohammed Sumon
+        <span style="padding-left:40px;" class="glyphicon glyphicon-thumbs-up"></span> Mohammed Sumon -->
 
     </div>
 

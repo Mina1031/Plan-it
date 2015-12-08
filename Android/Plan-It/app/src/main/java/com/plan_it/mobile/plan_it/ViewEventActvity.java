@@ -115,9 +115,6 @@ public class ViewEventActvity extends Activity{
 
         populateAttendee();
 
-
-
-
         btnLoadImg = (Button)findViewById(R.id.btnChngPic);
         eventImage = (ImageView)findViewById(R.id.ivViewEventImage);
 
@@ -403,8 +400,13 @@ public class ViewEventActvity extends Activity{
         etFromDate.setFocusable(false);
         etToDate.setEnabled(false);
         etToDate.setFocusable(false);
+        etFromTime.setEnabled(false);
+        etFromTime.setFocusable(false);
+        etToTime.setEnabled(false);
+        etToTime.setFocusable(false);
 
         btnLoadImg.setVisibility(View.INVISIBLE);
+        deleteEvent.setVisibility(View.GONE);
 
     }
     public void isInvited(){
@@ -419,8 +421,13 @@ public class ViewEventActvity extends Activity{
         etFromDate.setFocusable(false);
         etToDate.setEnabled(false);
         etToDate.setFocusable(false);
+        etFromTime.setEnabled(false);
+        etFromTime.setFocusable(false);
+        etToTime.setEnabled(false);
+        etToTime.setFocusable(false);
 
 
+        deleteEvent.setVisibility(View.GONE);
         itemList.setVisibility(View.GONE);
         messageBoard.setVisibility(View.GONE);
         btnLoadImg.setVisibility(View.GONE);
@@ -430,7 +437,7 @@ public class ViewEventActvity extends Activity{
     }
 
     public void isOwner() {
-        tvWhoIsComing.setText("Invite or Uninvite People");
+        tvWhoIsComing.setText("Invite People");
 
         addInvitee.setVisibility(View.VISIBLE);
         addMore.setVisibility(View.VISIBLE);
@@ -531,7 +538,7 @@ public class ViewEventActvity extends Activity{
         else if(change == base64ImageUpdate){
             jdata.put("picture", base64ImageUpdate);
         }
-        RestClient.put("events/" + eventID, jdata,LoginActivity.token, new JsonHttpResponseHandler() {
+        RestClient.put("events/" + eventID, jdata, LoginActivity.token, new JsonHttpResponseHandler() {
             public void onSuccess(String response) {
                 JSONObject res;
                 try {
@@ -546,7 +553,7 @@ public class ViewEventActvity extends Activity{
     }
 
     public void getMembers()throws JSONException{
-        RestClient.get("/events/" + eventID + "/members", null, LoginActivity.token, new JsonHttpResponseHandler() {
+        RestClient.get("events/" + eventID + "/members", null, LoginActivity.token, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray memberArray) {
                 Log.d("onSuccess: ", memberArray.toString());
@@ -559,7 +566,7 @@ public class ViewEventActvity extends Activity{
                         String friendlyName = member.getString("friendlyName");
                         String status = member.getString("isAttending");
                         MemberStatus memberStatus = MemberStatus.valueOf(status.trim().toUpperCase());
-                        mList.add(new Members(userId, friendlyName,memberStatus, true, true));
+                        mList.add(new Members(userId, friendlyName, memberStatus, true, true));
                         Log.d("Member: ", member.toString());
                     }
 
@@ -593,6 +600,8 @@ public class ViewEventActvity extends Activity{
         });
 
     }
+
+
     public void navItemList(View v)
     {
         Intent intent = new Intent(this, ItemListActivity.class);

@@ -211,6 +211,39 @@ angular.module('controller', [])
   }
   );
 
+  ServiceForEvents.getMembersByEventId($scope.id, $scope.token).success(function (data)
+  {
+    console.log(data);
+    $scope.memberList = data;
+  }
+  );
+
+  $scope.checkOwner = function (toCheck) {
+    if (toCheck.isAttending == "Owner") { 
+      return true;
+    }
+  }
+  $scope.checkInvited = function (toCheck) {
+    if (toCheck.isAttending == "Invited") { 
+      return true;
+    }
+  }
+  $scope.checkAttending = function (toCheck) {
+    if (toCheck.isAttending == "Attending") { 
+      return true;
+    }
+  }
+  $scope.checkDeclined = function (toCheck) {
+    if (toCheck.isAttending == "Declined") { 
+      return true;
+    }
+  }
+  $scope.checkLeft = function (toCheck) {
+    if (toCheck.isAttending == "Left") { 
+      return true;
+    }
+  }
+
   //$scope.event.picture = "data:image/jpeg;base64," + $scope.event.picture;
 
   $scope.deleteEvent = function () {
@@ -224,7 +257,7 @@ angular.module('controller', [])
 
 })
 
-.controller('InviteFriendController')
+// .controller('InviteFriendController')
 
 
 //search users
