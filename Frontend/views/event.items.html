@@ -16,7 +16,7 @@
         <th style="width:10%"></th>
     </tr><tr ng-repeat="items in itemList">
         <td><input type="text" ng-model="items.item"></td>
-        <td><input type="text" ng-model="items.whoseBringing"></td>
+        <td><button class="btn btn-sm btn-default" ng-click="claimItem(items)" ng-show="!checkClaimed(items)">Claim</button><div ng-show="checkClaimed(items)">{{items.whoseBringing}}</div></td>
         <td><input type="text" ng-model="items.estCost"></td>
         <td><input type="text" ng-model="items.actCost"></td>
         <td><button class="btn btn-sm btn-default" ng-click="updateItem(items)">Update</button></td>

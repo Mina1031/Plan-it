@@ -73,12 +73,20 @@ event.getUsersEvents = function(req, res, next) {
     if(err)
       console.log("error"  + err);
     else{
-      console.log(token);
-      database.eventModel.find({"members.UserId": token.UserID}, function(err, events) {
-        if (err)
+      database.eventModel.find({"members.UserId": token.UserID}).lean().exec(function(err, events){
+        if(err)
           console.log(err);
-        else {
-          res.status(200).send(events);
+        else{
+          database.eventModel.find().where("members.UserId").in(token.UserID).
+          select("-_id EventID what why where when endDate picture fromTime toTime itemList totalEstCost totalActCost members").lean().exec(function(err, result){
+            for(var i = 0; i < result.length;i++){
+              for(var j = 0; j < result[i].members.length;j++){
+                if(result[i].members[j].UserId == token.UserID)
+                  result[i].isAttending = result[i].members[j].isAttending;
+              }
+            }
+            res.status(200).json(result);
+          });
         }
       });
     }
@@ -144,18 +152,15 @@ event.createListItem = function(req, res, next) {
         "actCost": req.body.actCost
       });
       event.itemList.push(list);
-
-      database.eventModel.calculateEst(req.params.id, function(result) {
-        event.totalEstCost = result.estCost;
-        event.totalActCost = result.actCost;
-        event.save(function(err) {
+        event.save(function(err, data) {
           if (err)
             console.log(err);
           else{
+            console.log(data);
             res.sendStatus(201);
           }
         });
-      });
+
     }
   });
 }
@@ -180,7 +185,7 @@ event.claimItem = function(req, res, next){
     else{
       console.log(result);
       database.eventModel.update({"itemList.ListID" : req.params.item, "EventID" : req.params.id},
-      {$set : { "itemList.$.whoseBringing": result.UserID}},
+      {$set : { "itemList.$.whoseBringing": result.friendlyName}},
       function(err, item){
         if(err)
           console.log(err);
@@ -215,27 +220,28 @@ event.deleteItem = function(req, res, next){
 }
 
 event.updateItem = function(req, res, next){
+  console.log(req.params.item);
   database.eventModel.findOne({"itemList.ListID" : req.params.item, "EventID" : req.params.id}, function(err, result){
     if(err)
       console.log(err);
     else{
-      result.itemList[0].ListID = result.itemList[0].ListID;
-      result.itemList[0].item = req.body.item || result.itemList[0].item;
-      result.itemList[0].actCost = req.body.actCost || result.itemList[0].actCost;
-      result.itemList[0].estCost = req.body.estCost || result.itemList[0].estCost;
+      for(var i = 0; i < result.itemList.length;i++){
+        if(result.itemList[i].ListID == req.params.item){
+          result.itemList[i].ListID = result.itemList[i].ListID;
+          result.itemList[i].item = req.body.item || result.itemList[i].item;
+          result.itemList[i].actCost = req.body.actCost || result.itemList[i].actCost;
+          result.itemList[i].estCost = req.body.estCost || result.itemList[i].estCost;
 
-      database.eventModel.calculateEst(parseInt(req.params.id), function(item) {
-        result.totalEstCost = item[0].estCost;
-        result.totalActCost = item[0].actCost;
+            result.save(function(err, saved){
+              if(err)
+                console.log(err);
+              else{
+                res.json(saved);
+              }
+            });
 
-        result.save(function(err, saved){
-          if(err)
-            console.log(err);
-          else{
-            res.json(saved);
-          }
-        });
-      });
+        }
+      }
     }
   });
 }
@@ -246,6 +252,7 @@ event.inviteFriend = function(req, res, next){
     if(err)
       console.log(err);
     else{
+      console.log(event);
       database.userModel.findOne({"UserID" : req.params.friendId}, function(err, user){
         if(err)
           console.log(err);
@@ -259,7 +266,7 @@ event.inviteFriend = function(req, res, next){
                 res.status(409).send("member is already invited to the event");
               }
               else{
-                event.members.push({UserId: user.UserID, friendlyName : user.friendlyName, isAttending: "Invited"});
+                event.members.push({UserId: user.UserID, friendlyName: user.friendlyName, isAttending: "Invited"});
                 event.save(function(err){
                   if(err)
                     console.log(err);

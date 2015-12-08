@@ -105,7 +105,6 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemLi
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
-
                         try {
                             itemName = itemText.getText().toString();
                             updateListItem(itemName, itemId);
@@ -197,7 +196,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemLi
 
     public void claimItem(int id) throws JSONException{
 
-        RestClient.post("events/" + ItemListActivity.eventID + "/list/" + id, null, LoginActivity.token, new JsonHttpResponseHandler() {
+        RestClient.post("events/" + ItemListActivity.eventID + "/claim/" + id, null, LoginActivity.token, new JsonHttpResponseHandler() {
             public void onSuccess(String response) {
                 JSONObject res;
                 try {

@@ -4,7 +4,7 @@ var list = new mongoose.Schema({
     _id: false,
     ListID: Number,
     item: String,
-    whoseBringing: Number,
+    whoseBringing: String,
     estCost: Number,
     actCost: Number
 });

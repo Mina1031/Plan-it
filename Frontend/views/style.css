@@ -134,6 +134,16 @@ nav {
   width: 250px;
   margin-bottom: 10px;
 }
+.addfriend {
+  margin-left: 20px;
+  table-layout: fixed;
+  border-collapse: collapse;
+  width: 95%;
+  text-align: center;
+}
+.addfriend td {
+  border:1px #000 solid;
+}
 
 /* MESSAGE BOARD */
 .chat {

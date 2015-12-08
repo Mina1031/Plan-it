@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,8 +27,9 @@ import cz.msebera.android.httpclient.Header;
 public class FriendsListActivity extends AppCompatActivity {
     public ArrayList<FriendListModel> friendsList = new ArrayList<>();
     ListView list;
+    ImageView imgIsFavourite;
+    ImageView removeFriend;
     private ArrayList<FriendListModel> mFriends;
-    FriendsListAdapter adapter;
     Context context = this;
     int userID = LoginActivity.userID;
     @Override
@@ -49,19 +49,13 @@ public class FriendsListActivity extends AppCompatActivity {
     {
         return (Integer)imageView.getTag();
     }
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        menu.setHeaderTitle("Delete Friend");
-        menu.add(0, v.getId(), 0, "Are you sure?");
-    }
 
     public void fillFriendsList()throws JSONException {
         RequestParams jdata = new RequestParams();
         jdata.put("id", userID);
 
         Log.d("fillFriendsList: ", " The method has been hit");
-
+        removeFriend = (ImageView)findViewById(R.id.friends_list_remove);
         RestClient.get("/user/" + userID + "/friend", null, LoginActivity.token, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray friendsArray) {
@@ -74,27 +68,25 @@ public class FriendsListActivity extends AppCompatActivity {
                     {
                         friend = friendsArray.getJSONObject(i);
                         friendsList.add(new FriendListModel(friend.getInt("UserID"), friend.getString("friendlyName"), R.drawable.ic_perm_identity_black_24dp, true));
-                       Log.d("Friend: ", friend.toString());
+                        Log.d("Friend: ", friend.toString());
                     }
+
 
                     list = (ListView)findViewById(R.id.friends_list_view);
                     list.setAdapter(new FriendsListAdapter(context, R.layout.friends_list_item, friendsList));
+
+                    imgIsFavourite = (ImageView)findViewById(R.id.friends_list_favourite_star);
                     list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                            ImageView imgIsFavourite = (ImageView) view.findViewById(R.id.friends_list_favourite_star);
-
-                            if (GetImageResource(imgIsFavourite) == R.drawable.ic_favorite_blue_48dp)
-                            {
+                            if (GetImageResource(imgIsFavourite) == R.drawable.ic_favorite_blue_48dp) {
                                 imgIsFavourite.setImageResource(R.drawable.ic_favorite_border_blue_48dp);
                                 friendsList.get(position).IsFavourite = false;
 
                                 Toast.makeText(context, "Removed from favourites",
                                         Toast.LENGTH_LONG).show();
-                            }
-                            else
-                            {
+                            } else {
                                 imgIsFavourite.setImageResource(R.drawable.ic_favorite_blue_48dp);
                                 friendsList.get(position).IsFavourite = true;
                                 Toast.makeText(context, "Added to favourites",
@@ -141,6 +133,11 @@ public class FriendsListActivity extends AppCompatActivity {
     public void navAddFriend(View v)
     {
         Intent intent = new Intent(this, AddFriendActivity.class);
+        startActivity(intent);
+    }
+    public void NavToFriendList()
+    {
+        Intent intent = new Intent(this, FriendsListActivity.class);
         startActivity(intent);
     }
 }

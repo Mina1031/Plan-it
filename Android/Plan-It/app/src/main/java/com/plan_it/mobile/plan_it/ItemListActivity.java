@@ -179,25 +179,21 @@ public class ItemListActivity extends AppCompatActivity {
                 JSONObject items = null;
                 mItems = new ArrayList<>();
                 String whoseBringing;
-                int userId;
                 try {
                     for (int i = 0; i < itemsList.length(); i++) {
                         items = itemsList.getJSONObject(i);
-
+                        int itemId = items.getInt("ListID");
+                        String itemName = items.getString("item");
+                        Double estimatedCost = items.getDouble("estCost");
+                        Double actualCost = items.getDouble("actCost");
                         if(items.has("whoseBringing")){
-                            userId = items.getInt("whoseBringing");
+                            whoseBringing = items.getString("whoseBringing");
                         }
                         else{
-                            userId = 0;
+                            whoseBringing = "tap to claim";
                         }
-                        whoseBringing = getUserName(userId);
-                        if(whoseBringing == null){
-                            whoseBringing = "unclaimed";
-                        }
-                        else{
-                            whoseBringing = getUserName(userId);
-                        }
-                        mItems.add(new Item(items.getInt("ListID"), items.getString("item"), whoseBringing, items.getDouble("estCost"), items.getDouble("actCost")));
+
+                        mItems.add(new Item(itemId, itemName, whoseBringing, estimatedCost, actualCost));
                     }
                     adapter = new ItemListAdapter(getApplicationContext(), mItems);
                     items_recycler_view = (RecyclerView) findViewById(R.id.item_list_recycler_view);

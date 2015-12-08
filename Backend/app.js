@@ -26,7 +26,7 @@ app.post('/events/:id/invite/:friendId([0-9]*$)', eventCtrl.inviteFriend);
 app.post('/events/:id/invite/:answer(Attending|Declined)', eventCtrl.invitation);
 app.delete('/events/:id', eventCtrl.deleteEvent);
 app.get('/events/:id/list', eventCtrl.getListItems);
-app.post('/events/:id/list/:item', eventCtrl.claimItem);
+app.post('/events/:id/claim/:item', eventCtrl.claimItem);
 app.delete('/events/:id/list/:item', eventCtrl.deleteItem);
 app.put('/events/:id/list/:item', eventCtrl.updateItem);
 app.post("/events/:id/list", eventCtrl.createListItem);

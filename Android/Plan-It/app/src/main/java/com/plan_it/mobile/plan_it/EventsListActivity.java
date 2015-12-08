@@ -245,11 +245,14 @@ public class EventsListActivity extends AppCompatActivity implements SearchView.
                     for(int i = 0; i < eventsList.length(); i++){
                         firstEvent = eventsList.getJSONObject(i);
                         String eventImge = firstEvent.getString("picture");
+                        String userStats = firstEvent.getString("isAttending");
+                        IsAttending status = IsAttending.valueOf(userStats.trim().toUpperCase());
+
                         Bitmap eventimg = base64ToBitmap(eventImge);
 
                         Bitmap scaledImage = Bitmap.createScaledBitmap(eventimg, 140, 150, true);
 
-                        mEvents.add(new Event(firstEvent.getInt("EventID"), firstEvent.getString("what"), "Kevin Murphy", firstEvent.getString("why"), firstEvent.getString("where"), scaledImage, firstEvent.getString("when"), firstEvent.getString("endDate"),firstEvent.getString("fromTime"), firstEvent.getString("toTime"), IsAttending.OWNER/*randomStatus()*/, true, true));
+                        mEvents.add(new Event(firstEvent.getInt("EventID"), firstEvent.getString("what"), "Kevin Murphy", firstEvent.getString("why"), firstEvent.getString("where"), scaledImage, firstEvent.getString("when"), firstEvent.getString("endDate"),firstEvent.getString("fromTime"), firstEvent.getString("toTime"), status, true, true));
                                 Log.d("RestD", firstEvent.toString());
                     }
 
@@ -271,11 +274,6 @@ public class EventsListActivity extends AppCompatActivity implements SearchView.
 
         });
     }
-
-    public IsAttending randomStatus(){
-        return IsAttending.values()[new Random().nextInt(IsAttending.values().length)];
-    }
-
     public void navCreateNewEvent(View v)
     {
         Intent intent = new Intent(this, CreateEventActivity.class);

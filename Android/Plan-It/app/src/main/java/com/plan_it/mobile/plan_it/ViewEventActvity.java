@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -33,6 +34,7 @@ import android.widget.Toast;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,6 +44,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
+import cz.msebera.android.httpclient.Header;
 
 public class ViewEventActvity extends Activity{
     String base64ImageUpdate;
@@ -81,37 +85,9 @@ public class ViewEventActvity extends Activity{
 
     Calendar myCalendar = Calendar.getInstance();
 
-    public ArrayList<Members> mList = new ArrayList<>();
+    public ArrayList<Members> mList;
     ListView attendeeList;
     Context context = this;
-    /*String[] attendeeName = {
-            "Kristian",
-            "Joanne",
-            "Kevin",
-            "Mo",
-            "Amina",
-            "Luke",
-            "Kamran"
-    };
-    Integer[] imgid = {
-            R.drawable.mickey_mouse_icon,
-            R.drawable.riot_fest_325,
-            R.drawable.victoria_snowboard_mount_washington_small,
-            R.drawable.cottage_26_waterside_248,
-            R.drawable.no_image,
-            R.drawable.victoria_snowboard_mount_washington_small,
-            R.drawable.cottage_26_waterside_248,
-    };
-
-    Integer[] imgStatus = {
-            R.drawable.ic_thumb_up_green_24dp,
-            R.drawable.ic_thumb_up_green_24dp,
-            R.drawable.ic_thumb_up_green_24dp,
-            R.drawable.ic_thumb_up_green_24dp,
-            R.drawable.ic_thumb_up_green_24dp,
-            R.drawable.ic_thumb_up_green_24dp,
-            R.drawable.ic_thumb_up_green_24dp
-    };*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,14 +111,12 @@ public class ViewEventActvity extends Activity{
         btnNotGoing = (Button)findViewById(R.id.btnDecline);
         deleteEvent = (Button)findViewById(R.id.btnViewDeleteEvent);
 
+        attendeeList = (ListView)findViewById(R.id.attendee_list);
+
         populateAttendee();
 
-        attendeeList = (ListView)findViewById(R.id.attendee_list);
-        attendeeList.setAdapter(new AttendeeListAdapter(this, R.layout.attendee_list, mList));
 
-       /* AttendeeListAdapter adapter = new AttendeeListAdapter(this, attendeeName, imgid, imgStatus);
-        attendeeList = (ListView)findViewById(android.R.id.list);
-        attendeeList.setAdapter(adapter);*/
+
 
         btnLoadImg = (Button)findViewById(R.id.btnChngPic);
         eventImage = (ImageView)findViewById(R.id.ivViewEventImage);
@@ -164,13 +138,13 @@ public class ViewEventActvity extends Activity{
     }
 
     public void populateAttendee(){
-        mList.add(new Members(1,"KristianCastaneda",MemberStatus.OWNER,true, true));
-        mList.add(new Members(2,"JoanneTanson",MemberStatus.ATTENDING,true, true));
-        mList.add(new Members(3,"KevinMurphy",MemberStatus.ATTENDING,true, true));
-        mList.add(new Members(4,"LukeFarnell",MemberStatus.INVITED,false, false));
-        mList.add(new Members(5,"KamranSyed",MemberStatus.INVITED,false, false));
-        mList.add(new Members(6,"MoSumon",MemberStatus.DECLINED,false, false));
-        mList.add(new Members(7,"AminaAbbasi",MemberStatus.LEFT,false, false));
+        try{
+            getMembers();
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public void getBundleValues(){
@@ -571,8 +545,41 @@ public class ViewEventActvity extends Activity{
         });
     }
 
+    public void getMembers()throws JSONException{
+        RestClient.get("/events/" + eventID + "/members", null, LoginActivity.token, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray memberArray) {
+                Log.d("onSuccess: ", memberArray.toString());
+                JSONObject member = null;
+                try {
+                    mList = new ArrayList<>();
+                    for (int i = 0; i < memberArray.length(); i++) {
+                        member = memberArray.getJSONObject(i);
+                        int userId = member.getInt("UserId");
+                        String friendlyName = member.getString("friendlyName");
+                        String status = member.getString("isAttending");
+                        MemberStatus memberStatus = MemberStatus.valueOf(status.trim().toUpperCase());
+                        mList.add(new Members(userId, friendlyName,memberStatus, true, true));
+                        Log.d("Member: ", member.toString());
+                    }
+
+                    attendeeList.setAdapter(new AttendeeListAdapter(context, R.layout.attendee_list, mList));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] header, Throwable throwable, JSONObject response) {
+                Toast.makeText(getApplicationContext(), "FAILURE", Toast.LENGTH_LONG).show();
+            }
+
+        });
+    }
+
     public void deleteEvent() throws JSONException {
-        RestClient.delete("events/" + eventID,null, LoginActivity.token, new JsonHttpResponseHandler() {
+        RestClient.delete("events/" + eventID, null, LoginActivity.token, new JsonHttpResponseHandler() {
             public void onSuccess(String response) {
                 JSONObject res;
                 try {
