@@ -129,13 +129,33 @@ event.updateEvent = function(req, res, next) {
 }
 
 event.deleteEvent = function(req, res, next) {
-  database.eventModel.remove({
-    "EventID": req.params.id
-  }, function (err, event) {
-    if (err)
+  database.userModel.findOne({token: req.headers["x-access-token"]}, function(err, user){
+    if(err)
       console.log(err);
-    else
-      res.sendStatus(200);
+    else{
+      database.eventModel.findOne({"EventID" : req.params.id}, function(err, event){
+        if(err)
+          console.log(err);
+        else{
+          for(var i = 0; i < event.members.length;i++){
+            if(event.members[i].UserId == user.UserID && event.members[i].isAttending !== 'Owner'){
+              res.status(409).send("Only the owener can delete the event");
+            }
+            else if(event.members[i].UserId == user.UserID && event.members[i].isAttending == 'Owner'){
+              database.eventModel.remove({
+                "EventID": req.params.id
+              }, function (err, event) {
+                if (err)
+                  console.log(err);
+                else{
+                  res.sendStatus(200);
+                }
+              });
+            }
+          }
+        }
+      });
+    }
   });
 }
 
@@ -267,6 +287,11 @@ event.inviteFriend = function(req, res, next){
               }
               else{
                 event.members.push({UserId: user.UserID, friendlyName: user.friendlyName, isAttending: "Invited"});
+                user.events.push({eventID:req.params.id});
+                user.save(function(err){
+                  if(err)
+                    console.log(err);
+                });
                 event.save(function(err){
                   if(err)
                     console.log(err);
@@ -293,6 +318,35 @@ event.invitation = function(req, res, next){
         if(err)
           console.log(err);
         else{
+          res.sendStatus(200);
+        }
+      });
+    }
+  });
+}
+
+event.leave = function(req, res, next){
+  database.userModel.findOne({token: req.headers["x-access-token"]}, function(err, user){
+    if(err)
+      console.log(err);
+    else{
+      database.eventModel.findOne({"EventID" : parseInt(req.params.id)}, function(err, event){
+        if(err)
+          console.log(err);
+        else{
+          for(var i = 0; i < event.members.length;i++){
+            if(event.members[i].UserId == user.UserID && event.members[i].isAttending == 'Owner')
+              res.status(409).send("The Owner cannot be removed from the event");
+          }
+          //console.log(user.events.eventID);
+          //console.log(event.members);
+          user.events.pull({_id: null, eventID : req.params.id});
+          user.save(function(err){
+            if(err)
+              console.log(err);
+          });
+          event.members.pull({UserId : user.UserID});
+          event.save();
           res.sendStatus(200);
         }
       });

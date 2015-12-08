@@ -17,7 +17,7 @@ var userSchema = new Schema({
     email: { type: String, required: true, unique: true },
     hashPassword: { type: String, required: true},
     friendList: [{_id: false, userID: {type: Number, required: true}, isFavorite: {type: Boolean, default: true } }],
-    events: [{ eventID:Number }],
+    events: [{ _id: false, eventID:Number }],
     token: String
   }
 );
