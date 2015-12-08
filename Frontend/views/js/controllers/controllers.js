@@ -190,13 +190,39 @@ angular.module('controller', [])
 .controller('EventListController', function ($scope, ServiceForEvents, ServiceForUser){
   $scope.token = ServiceForUser.getToken();
   console.log($scope.token);
-
+  // $scope.event;
   ServiceForEvents.getAllEvents($scope.token).success(function (data)
   {
       $scope.eventList = data;
       console.log(data);
   }
   );
+
+  $scope.checkOwner = function (toCheck) {
+    if (toCheck.isAttending == "Owner") { 
+      return true;
+    }
+  }
+  $scope.checkInvited = function (toCheck) {
+    if (toCheck.isAttending == "Invited") { 
+      return true;
+    }
+  }
+  $scope.checkAttending = function (toCheck) {
+    if (toCheck.isAttending == "Attending") { 
+      return true;
+    }
+  }
+  $scope.checkDeclined = function (toCheck) {
+    if (toCheck.isAttending == "Declined") { 
+      return true;
+    }
+  }
+  $scope.checkLeft = function (toCheck) {
+    if (toCheck.isAttending == "Left") { 
+      return true;
+    }
+  }
 
 })
 

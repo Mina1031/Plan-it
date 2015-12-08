@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +22,7 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,17 +30,26 @@ import java.util.List;
 import cz.msebera.android.httpclient.Header;
 
 public class ItemListActivity extends AppCompatActivity {
-    private int split = 0;
+    int split = 1;
     private List<Item> mItems;
     private ItemListAdapter adapter;
     private RecyclerView items_recycler_view;
     String token;
     public static int eventID;
-    String friendlyName;
-    String claimer;
-    String itemName;
-    String actCost;
-    String estCost;
+    String totalActual;
+    String totalEstimate;
+    String splitActual;
+    String splitEstimate;
+    TextView totAct;
+    TextView totEst;
+    TextView splitAct;
+    TextView splitEst;
+    TextView splitNumber;
+    ImageView minusSplit;
+    ImageView addSplit;
+
+    Double totalActualCost;
+    Double totalEstimatedCost;
 
     void initializeData()
     {
@@ -55,7 +66,16 @@ public class ItemListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getExtras();
         setContentView(R.layout.activity_item_list);
+        totAct = (TextView)findViewById(R.id.item_list_text_actual_cost);
+        totEst = (TextView)findViewById(R.id.item_list_text_estimated_cost);
+        splitAct = (TextView)findViewById(R.id.item_list_text_actual_cost_split);
+        splitEst = (TextView)findViewById(R.id.item_list_text_estimated_cost_split);
+        splitNumber = (TextView)findViewById(R.id.number_split_text);
+        minusSplit = (ImageView)findViewById(R.id.remove_split_button);
+        addSplit = (ImageView)findViewById(R.id.add_split_button);
+
         initializeData();
+
 
     }
 
@@ -115,6 +135,13 @@ public class ItemListActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
+        if (id == R.id.action_logout)
+        {
+            LoginActivity.token = null;
+            LoginActivity.userID = 0;
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -154,37 +181,16 @@ public class ItemListActivity extends AppCompatActivity {
 
     }
 
-    public String getUserName(int userId) {
-        RestClient.get("/search/" + userId + "/user", null, token, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // If the response is JSONObject instead of expected JSONArray
-                JSONObject res;
-                String userName;
-                try {
-                    res = response;
-                    userName = res.getString("friendlyName");
-                    friendlyName = userName;
-                } catch (JSONException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            @Override
-            public void onFailure(int statusCode, Header[] header, Throwable throwable, JSONObject response) {
-            }
-
-        });
-        return friendlyName;
-    }
-
     public void getItemList() throws JSONException {
         RestClient.get("events/" + eventID + "/list", null, LoginActivity.token, new JsonHttpResponseHandler() {
-         //   @Override
+            @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray itemsList) {
                 // Pull out the first event on the public timeline
                 JSONObject items = null;
                 mItems = new ArrayList<>();
                 String whoseBringing;
+                Double totalAct = 0.0;
+                Double totalEst = 0.0;
                 try {
                     for (int i = 0; i < itemsList.length(); i++) {
                         items = itemsList.getJSONObject(i);
@@ -192,15 +198,82 @@ public class ItemListActivity extends AppCompatActivity {
                         String itemName = items.getString("item");
                         Double estimatedCost = items.getDouble("estCost");
                         Double actualCost = items.getDouble("actCost");
-                        if(items.has("whoseBringing")){
+                        totalAct = totalAct + actualCost;
+                        totalEst = totalEst + estimatedCost;
+
+                        if (items.has("whoseBringing")) {
                             whoseBringing = items.getString("whoseBringing");
-                        }
-                        else{
+                        } else {
                             whoseBringing = "tap to claim";
                         }
 
                         mItems.add(new Item(itemId, itemName, whoseBringing, estimatedCost, actualCost));
                     }
+
+                    totalActualCost = totalAct;
+                    totalEstimatedCost = totalEst;
+
+                    splitNumber.setText(String.valueOf(split));
+
+                    Double spActual = totalActualCost / split;
+                    Double spEstimate = totalEstimatedCost / split;
+                    splitActual = String.valueOf(String.format("%.2f",spActual));
+                    splitEstimate = String.valueOf(String.format("%.2f",spEstimate));
+                    totalActual = String.valueOf(String.format("%.2f",totalActualCost));
+                    totalEstimate = String.valueOf(String.format("%.2f",totalEstimatedCost));
+
+                    totAct.setText("$" + totalActual);
+                    totEst.setText("$" + totalEstimate);
+
+                    splitAct.setText("$" + splitActual);
+                    splitEst.setText("$" + splitEstimate);
+
+                    minusSplit.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            split--;
+                            if(split <= 0){
+                                split = 1;
+                            }
+                            splitNumber.setText(String.valueOf(split));
+                            Double spActual = totalActualCost / split;
+                            Double spEstimate = totalEstimatedCost / split;
+                            splitActual = String.valueOf(String.format("%.2f", spActual));
+                            splitEstimate = String.valueOf(String.format("%.2f", spEstimate));
+                            totalActual = String.valueOf(String.format("%.2f", totalActualCost));
+                            totalEstimate = String.valueOf(String.format("%.2f", totalEstimatedCost));
+
+                            totAct.setText("$" + totalActual);
+                            totEst.setText("$" + totalEstimate);
+
+                            splitAct.setText("$" + splitActual);
+                            splitEst.setText("$" + splitEstimate);
+                        }
+                    });
+                    addSplit.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            split++;
+                            splitNumber.setText(String.valueOf(split));
+                            Double spActual = totalActualCost / split;
+                            Double spEstimate = totalEstimatedCost / split;
+                            splitActual = String.valueOf(String.format("%.2f", spActual));
+                            splitEstimate = String.valueOf(String.format("%.2f", spEstimate));
+                            totalActual = String.valueOf(String.format("%.2f", totalActualCost));
+                            totalEstimate = String.valueOf(String.format("%.2f", totalEstimatedCost));
+
+                            totAct.setText("$" + totalActual);
+                            totEst.setText("$" + totalEstimate);
+
+                            splitAct.setText("$" + splitActual);
+                            splitEst.setText("$" + splitEstimate);
+                        }
+                    });
+
+
+
+
+
                     adapter = new ItemListAdapter(getApplicationContext(), mItems);
                     items_recycler_view = (RecyclerView) findViewById(R.id.item_list_recycler_view);
                     LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
@@ -208,9 +281,7 @@ public class ItemListActivity extends AppCompatActivity {
                     items_recycler_view.setAdapter(adapter);
                 } catch (JSONException e) {
                     e.printStackTrace();
-
                 }
-
             }
 
             @Override
@@ -218,73 +289,5 @@ public class ItemListActivity extends AppCompatActivity {
             }
 
         });
-    }
-    public String getUserName() {
-        RestClient.get("/search/" + LoginActivity.userID + "/user", null, LoginActivity.token, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // If the response is JSONObject instead of expected JSONArray
-                JSONObject res;
-                String userName;
-                try {
-                    res = response;
-                    userName = res.getString("friendlyName");
-                    claimer = userName;
-
-                } catch (JSONException ex) {
-                    ex.printStackTrace();
-                }
-
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] header, Throwable throwable, JSONObject response) {
-                Toast.makeText(getApplicationContext(), "GET USERNAME FAIL", Toast.LENGTH_LONG).show();
-            }
-
-        });
-        return claimer;
-    }
-
-    public void claimItem(int id) throws JSONException{
-
-        RestClient.post("events/" + ItemListActivity.eventID + "/claim/" + id, null, LoginActivity.token, new JsonHttpResponseHandler() {
-            public void onSuccess(String response) {
-                JSONObject res;
-                try {
-                    res = new JSONObject(response);
-                    Log.d("debug", res.getString("some_key")); // this is how you get a value out
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-    public void updateListItem(String change, int id) throws JSONException{
-        RequestParams updatedData = new RequestParams();
-        if(change == itemName){
-            updatedData.put("item",itemName);
-        }
-        else if(change == estCost){
-            updatedData.put("estCost",Double.parseDouble(estCost));
-        }
-        else if(change == actCost){
-            updatedData.put("actCost",Double.parseDouble(actCost));
-        }
-
-        RestClient.put("events/" + ItemListActivity.eventID + "/list/" + id, updatedData, LoginActivity.token, new JsonHttpResponseHandler() {
-            public void onSuccess(String response) {
-                JSONObject res;
-                try {
-                    res = new JSONObject(response);
-                    Log.d("debug", res.getString("some_key")); // this is how you get a value out
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        });
-
     }
 }

@@ -458,6 +458,31 @@ public class ViewEventActvity extends Activity{
 
         btnGoing.setVisibility(View.VISIBLE);
         btnNotGoing.setVisibility(View.VISIBLE);
+
+        btnGoing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    answerInvite("Attending");
+                    Intent intent = new Intent(ViewEventActvity.this, EventsListActivity.class);
+                    startActivity(intent);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        btnNotGoing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    answerInvite("Declined");
+                    Intent intent = new Intent(ViewEventActvity.this, EventsListActivity.class);
+                    startActivity(intent);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public void isOwner() {
@@ -672,6 +697,21 @@ public class ViewEventActvity extends Activity{
         intent.putExtra("token", LoginActivity.token);
         intent.putExtra("eventID", eventID);
         startActivity(intent);
+    }
+
+    public void answerInvite(String answer)throws JSONException{
+        RestClient.post("events/" + eventID + "/invite/" + answer, null, LoginActivity.token, new JsonHttpResponseHandler() {
+            public void onSuccess(String response) {
+                JSONObject res;
+                try {
+                    res = new JSONObject(response);
+                    Log.d("debug", res.getString("some_key")); // this is how you get a value out
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
 }
