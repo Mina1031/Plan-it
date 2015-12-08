@@ -237,14 +237,25 @@
             android:layout_weight="0.80"
             android:orientation="vertical" >
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="15dp"
-                android:text="Who is coming?"
-                android:id="@+id/tvWhoIsComing"
-                android:layout_marginTop="10dp"
-                android:textStyle="bold" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="30dp"
+                    android:text="Who is coming?"
+                    android:id="@+id/tvWhoIsComing"
+                    android:textStyle="bold"
+                    android:layout_alignBottom="@+id/btn_invite_more"/>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btn_invite_more"
+                    android:layout_toRightOf="@+id/tvWhoIsComing"
+                    android:text="Invite"
+                    android:visibility="gone"/>
+            </RelativeLayout>
 
             <ListView
                 android:layout_width="wrap_content"
@@ -257,49 +268,6 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.20"
-            android:orientation="horizontal" >
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.7" >
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/edit_addInvitee"
-                    android:textSize="15dp"
-                    android:text="Enter Name"
-                    android:layout_alignLeft="@android:id/list"
-                    android:layout_below="@android:id/list"
-                    android:layout_marginBottom="10dp"
-                    android:visibility="gone"/>
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.3" >
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:text="Add"
-                    android:textSize="15dp"
-                    android:id="@+id/btnInviteMore"
-                    android:layout_below="@android:id/list"
-                    android:layout_toRightOf="@id/edit_addInvitee"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignTop="@id/edit_addInvitee"
-                    android:layout_marginBottom="10dp"
-                    android:visibility="gone"/>
-            </LinearLayout>
-        </LinearLayout>
 
     </LinearLayout>
 
@@ -321,7 +289,7 @@
                 android:text="Item List"
                 android:id="@+id/btnViewItemList"
                 android:height="20dp"
-                android:layout_below="@id/edit_addInvitee"
+                android:layout_below="@id/attendee_list"
                 android:layout_alignParentBottom="true"
                 android:onClick="navItemList"/>
 
@@ -331,7 +299,7 @@
                 android:text="Going"
                 android:id="@+id/btnAccept"
                 android:height="20dp"
-                android:layout_below="@id/edit_addInvitee"
+                android:layout_below="@id/attendee_list"
                 android:layout_alignParentBottom="true"
                 android:visibility="gone"/>
 
@@ -351,7 +319,7 @@
                 android:text="Messages"
                 android:id="@+id/btnViewMsgBoard"
                 android:height="20dp"
-                android:layout_below="@id/btnInviteMore"
+                android:layout_below="@id/attendee_list"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"/>
 
@@ -362,7 +330,7 @@
                 android:id="@+id/btnDecline"
                 android:height="20dp"
                 android:layout_alignTop="@id/btnViewItemList"
-                android:layout_below="@id/btnInviteMore"
+                android:layout_below="@id/attendee_list"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
                 android:visibility="gone"/>
