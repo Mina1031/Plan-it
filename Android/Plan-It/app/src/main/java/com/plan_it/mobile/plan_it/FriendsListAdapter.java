@@ -5,7 +5,9 @@ package com.plan_it.mobile.plan_it;
  */
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +31,8 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
     Context context;
     int resource;
     FriendHolder friend;
-
+    FriendsListActivity fla;
+    View view;
     public FriendsListAdapter(Context context, int resource, ArrayList<FriendListModel> friendsList) {
         super(context, resource, friendsList);
         this.context = context;
@@ -38,6 +41,7 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
     }
 
     public View getView(final int position, View view, ViewGroup parent) {
+        this.view = view;
         View rowView = view;
          final int i = position;
         if(rowView == null)
@@ -49,9 +53,7 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
 
             friend.txtFriendID = (TextView) rowView.findViewById(R.id.friends_list_friend_id);
             friend.imgProfilePic = (ImageView) rowView.findViewById(R.id.friends_list_profile_image);
-            friend.imgIsFavourite = (ImageView) rowView.findViewById(R.id.friends_list_favourite_star);
             friend.removeFriend = (ImageView)rowView.findViewById(R.id.friends_list_remove);
-
         }
         else
         {
@@ -63,20 +65,30 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
         friend.removeFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RemoveFriend(LoginActivity.userID, friendsList.get(position).UserID);
+
+
+                AlertDialog.Builder alert = new AlertDialog.Builder(
+                        context);
+                alert.setTitle("Alert!!");
+                alert.setMessage("Are you sure to delete record");
+                alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        RemoveFriend(LoginActivity.userID, friendsList.get(position).UserID);
+                        dialog.dismiss();
+                    }
+                });
+                alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                alert.show();
+                notifyDataSetChanged();
             }
         });
         rowView.setTag(friend);
-        if(friendsList.get(position).IsFavourite)
-        {
-            friend.imgIsFavourite.setImageResource(R.drawable.ic_favorite_blue_48dp);
-            friend.imgIsFavourite.setTag(R.drawable.ic_favorite_blue_48dp);
-        }
-        else
-        {
-            friend.imgIsFavourite.setImageResource(R.drawable.ic_favorite_border_blue_48dp);
-            friend.imgIsFavourite.setTag(R.drawable.ic_favorite_border_blue_48dp);
-        }
 
         return rowView;
     }
@@ -84,7 +96,6 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
     {
         ImageView imgProfilePic;
         TextView txtFriendID;
-        ImageView imgIsFavourite;
         ImageView removeFriend;
     }
     public void RemoveFriend(int id, int friendId)
@@ -104,9 +115,5 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
                 Toast.makeText(context, "Failure, Unable to add: " + response, Toast.LENGTH_LONG).show();
             }
         });
-    }
-    private int GetImageResource(ImageView imageView)
-    {
-        return (Integer)imageView.getTag();
     }
 }

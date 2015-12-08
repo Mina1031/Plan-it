@@ -132,14 +132,12 @@ public class EventsListActivity extends AppCompatActivity implements SearchView.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+
         if (id == R.id.action_filter)
         {
             FilterEvents();
         }
-        if (id == R.id.action_friendsList)
+        if (id == R.id.action_friends_list)
         {
             Intent intent = new Intent(this, FriendsListActivity.class);
             startActivity(intent);
@@ -148,11 +146,7 @@ public class EventsListActivity extends AppCompatActivity implements SearchView.
         {
             navCreateNewEvent(view);
         }
-        if(id == R.id.action_item_list)
-        {
-            Intent intent = new Intent(this, ItemListActivity.class);
-            startActivity(intent);
-        }
+
         if(id == R.id.action_refresh)
         {
             Intent intent = getIntent();

@@ -2,6 +2,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.plan_it.mobile.plan_it.FriendsListActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+
+    <item android:id="@+id/action_add_friends" android:title="@string/title_activity_add_friend"
+        android:orderInCategory="100" app:showAsAction="ifRoom" />
+
+    <item android:id="@+id/action_event_list" android:title="@string/title_activity_events_list"
+        android:orderInCategory="200" app:showAsAction="never" />
+
+    <item android:id="@+id/action_create_new_event" android:title="@string/title_activity_create_event"
+        android:orderInCategory="400" app:showAsAction="never" android:icon="@drawable/ic_add_circle_blue_24dp"/>
+
+    <item android:id="@+id/action_refresh" android:title="Refresh View"
+        android:orderInCategory="300" app:showAsAction="never" />
+
+    <item android:id="@+id/action_search_friends"
+        android:title="@string/action_search"
+        android:icon="@drawable/ic_search_blue_24dp"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
 </menu>

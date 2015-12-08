@@ -2,21 +2,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.plan_it.mobile.plan_it.EventsListActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
-    <item android:id="@+id/action_friendsList" android:title="@string/title_activity_friends_list"
+
+    <item android:id="@+id/action_friends_list" android:title="@string/title_activity_friends_list"
     android:orderInCategory="300" app:showAsAction="never" />
-    <item android:id="@+id/action_item_list" android:title="@string/title_activity_item_list"
-        android:orderInCategory="500" app:showAsAction="never" />
+
     <item android:id="@+id/action_refresh" android:title="Refresh View"
         android:orderInCategory="600" app:showAsAction="never" />
+
     <item android:id="@+id/action_create_new_event" android:title="@string/title_activity_create_event"
         android:orderInCategory="400" app:showAsAction="ifRoom" android:icon="@drawable/ic_add_circle_blue_24dp"/>
+
     <item android:id="@+id/action_filter" android:icon="@drawable/ic_filter_list_blue_24dp" android:title="@string/filterBy"
         android:orderInCategory="200" app:showAsAction="always"/>
+
     <item android:id="@+id/action_search"
         android:title="@string/action_search"
         android:icon="@drawable/ic_search_blue_24dp"
         app:showAsAction="ifRoom|collapseActionView"
         app:actionViewClass="android.support.v7.widget.SearchView" />
+
 </menu>

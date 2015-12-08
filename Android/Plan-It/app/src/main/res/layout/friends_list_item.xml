@@ -19,19 +19,12 @@
         android:textSize="25sp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight=".7"/>
+        android:layout_weight=".75"/>
     <ImageView
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_weight=".1"
+        android:layout_weight=".15"
         android:src="@drawable/ic_delete_grey_24dp"
         android:id="@+id/friends_list_remove"
-        android:clickable="true"/>
-    <ImageView
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_weight=".1"
-        android:src="@drawable/ic_favorite_border_blue_48dp"
-        android:id="@+id/friends_list_favourite_star"
         android:clickable="true"/>
 </LinearLayout>

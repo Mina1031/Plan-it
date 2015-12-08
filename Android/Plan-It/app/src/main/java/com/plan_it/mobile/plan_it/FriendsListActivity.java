@@ -14,7 +14,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,14 +26,24 @@ import cz.msebera.android.httpclient.Header;
 public class FriendsListActivity extends AppCompatActivity {
     public ArrayList<FriendListModel> friendsList = new ArrayList<>();
     ListView list;
-    ImageView imgIsFavourite;
     ImageView removeFriend;
+    boolean isFromEditEvent = false;
+    int eventID;
+    int friendID;
+    String friendName;
     private ArrayList<FriendListModel> mFriends;
-    Context context = this;
+    public Context context = this;
     int userID = LoginActivity.userID;
+    String token = LoginActivity.token;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        if(intent.getExtras() != null) {
+            isFromEditEvent = bundle.getBoolean("isFromEditEvent");
+            eventID = bundle.getInt("eventID");
+        }
         try
         {
             fillFriendsList();
@@ -51,11 +60,9 @@ public class FriendsListActivity extends AppCompatActivity {
     }
 
     public void fillFriendsList()throws JSONException {
-        RequestParams jdata = new RequestParams();
-        jdata.put("id", userID);
 
-        Log.d("fillFriendsList: ", " The method has been hit");
         removeFriend = (ImageView)findViewById(R.id.friends_list_remove);
+
         RestClient.get("/user/" + userID + "/friend", null, LoginActivity.token, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray friendsArray) {
@@ -68,29 +75,43 @@ public class FriendsListActivity extends AppCompatActivity {
                     {
                         friend = friendsArray.getJSONObject(i);
                         friendsList.add(new FriendListModel(friend.getInt("UserID"), friend.getString("friendlyName"), R.drawable.ic_perm_identity_black_24dp, true));
+                        friendID = friend.getInt("UserID");
+                        friendName = friend.getString("friendlyName");
                         Log.d("Friend: ", friend.toString());
                     }
 
+                    if(isFromEditEvent)
+                    {
+                        removeFriend.setImageResource(R.drawable.ic_add_circle_blue_24dp);
+                    }
 
                     list = (ListView)findViewById(R.id.friends_list_view);
                     list.setAdapter(new FriendsListAdapter(context, R.layout.friends_list_item, friendsList));
 
-                    imgIsFavourite = (ImageView)findViewById(R.id.friends_list_favourite_star);
                     list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
+
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                            if (GetImageResource(imgIsFavourite) == R.drawable.ic_favorite_blue_48dp) {
-                                imgIsFavourite.setImageResource(R.drawable.ic_favorite_border_blue_48dp);
-                                friendsList.get(position).IsFavourite = false;
+                            if(isFromEditEvent)
+                            {
+                                RestClient.post("/events/"+ eventID + "/invite/" + friendID, null, token, new JsonHttpResponseHandler() {
+                                    @Override
+                                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                        super.onSuccess(statusCode, headers, response);
+                                        Toast.makeText(getApplicationContext(), "Success, Friend: " + friendName + " Was added\n" + response, Toast.LENGTH_LONG).show();
+                                    }
 
-                                Toast.makeText(context, "Removed from favourites",
-                                        Toast.LENGTH_LONG).show();
-                            } else {
-                                imgIsFavourite.setImageResource(R.drawable.ic_favorite_blue_48dp);
-                                friendsList.get(position).IsFavourite = true;
-                                Toast.makeText(context, "Added to favourites",
-                                        Toast.LENGTH_LONG).show();
+                                    @Override
+                                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                                        super.onFailure(statusCode, headers, responseString, throwable);
+                                        Toast.makeText(getApplicationContext(), "FAILURE, Friend: " + friendName + " Could not be added\n" + responseString , Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                Toast.makeText(getApplicationContext(), "Friend: " + friendName , Toast.LENGTH_LONG).show();
                             }
                         }
                     });
@@ -123,10 +144,27 @@ public class FriendsListActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
+        if (id == R.id.action_event_list)
+        {
+            Intent intent = new Intent(this, EventsListActivity.class);
+            startActivity(intent);
+        }
+        if (id == R.id.action_add_friends)
+        {
+            Intent intent = new Intent(this, AddFriendActivity.class);
+            startActivity(intent);
+        }
+        if (id == R.id.action_create_new_event)
+        {
+            Intent intent = new Intent(this, CreateEventActivity.class);
+            startActivity(intent);
+        }
+        if(id == R.id.action_refresh)
+        {
+            Intent intent = getIntent();
+            startActivity(intent);
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -135,7 +173,7 @@ public class FriendsListActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AddFriendActivity.class);
         startActivity(intent);
     }
-    public void NavToFriendList()
+    public void NavToFriendList(View v)
     {
         Intent intent = new Intent(this, FriendsListActivity.class);
         startActivity(intent);
