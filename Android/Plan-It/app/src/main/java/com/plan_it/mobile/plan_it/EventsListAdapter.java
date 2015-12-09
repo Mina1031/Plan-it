@@ -225,6 +225,8 @@ public class EventsListAdapter extends RecyclerView.Adapter<EventsListAdapter.Ev
         }
         else if(mEvents.get(i).isAttending == IsAttending.LEFT)
         {
+            eventsViewHolder.button1.setImageResource(R.drawable.ic_photo_library_blue_24dp);
+            eventsViewHolder.button2.setImageResource(R.drawable.ic_delete_grey_24dp);
             eventsViewHolder.cv.setCardBackgroundColor(Color.argb(125, 255, 191, 92));
         }
         else if(mEvents.get(i).isAttending == IsAttending.DECLINED)

@@ -3,6 +3,7 @@ package com.plan_it.mobile.plan_it;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -11,6 +12,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -48,9 +50,12 @@ import java.util.Locale;
 import cz.msebera.android.httpclient.Header;
 
 public class ViewEventActvity extends Activity{
+
+    private static final int CAMERA_REQUEST = 1888;
+
     String base64ImageUpdate;
     Bitmap bmp;
-
+    byte[] imageByte;
     int eventID;
     boolean isFromEditEvent;
     String eTitle;
@@ -60,7 +65,6 @@ public class ViewEventActvity extends Activity{
     String eToDate;
     String eFromTime;
     String eToTime;
-    String eOwner;
     IsAttending status;
     byte[] byteArray;
     Bitmap eImage;
@@ -93,7 +97,6 @@ public class ViewEventActvity extends Activity{
         setContentView(R.layout.activity_view_event_actvity);
 
         getBundleValues();
-
         addMore = (Button)findViewById(R.id.btn_invite_more);
         tvWhoIsComing = (TextView)findViewById(R.id.tvWhoIsComing);
         etTitle = (EditText)findViewById(R.id.etViewEventTitle);
@@ -119,9 +122,7 @@ public class ViewEventActvity extends Activity{
         btnLoadImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                photoPickerIntent.setType("image/*");
-                startActivityForResult(photoPickerIntent, 1);
+                imageOption();
             }
         });
         onEdit();
@@ -131,6 +132,83 @@ public class ViewEventActvity extends Activity{
         else if(status == IsAttending.INVITED){isInvited();}
         else if(status == IsAttending.OWNER){isOwner();}
         else if(status == IsAttending.DECLINED){isDeclined();}
+    }
+
+    public void imageOption(){
+        final CharSequence[] items = {"Take Photo", "Choose from Library", "Cancel"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(ViewEventActvity.this);
+        builder.setTitle("Add Photo!");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                if (items[item].equals("Take Photo")) {
+                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                } else if (items[item].equals("Choose from Library")) {
+                    Intent intent = new Intent(
+                            Intent.ACTION_PICK,
+                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    intent.setType("image/*");
+                    startActivityForResult(
+                            Intent.createChooser(intent, "Select File"),
+                            1);
+                } else if (items[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == CAMERA_REQUEST) {
+                Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                Bitmap scaled = Bitmap.createScaledBitmap(thumbnail, 256, 256, true);
+                imageByte = bytes.toByteArray();
+                scaled.compress(Bitmap.CompressFormat.JPEG, 10, bytes);
+                base64ImageUpdate = Base64.encodeToString(imageByte, Base64.NO_WRAP);
+                eventImage.setImageBitmap(scaled);
+
+                try {
+                    updateEvent(base64ImageUpdate);
+                    Toast.makeText(getApplicationContext(), "Image Successfully Updated", Toast.LENGTH_LONG).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+            } else if (requestCode == 1) {
+                Uri selectedImageUri = data.getData();
+                String[] projection = {MediaStore.MediaColumns.DATA};
+                Cursor cursor = managedQuery(selectedImageUri, projection, null, null,
+                        null);
+                int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+                cursor.moveToFirst();
+                String selectedImagePath = cursor.getString(column_index);
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(selectedImagePath, options);
+
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                Bitmap d = new BitmapDrawable(getApplicationContext().getResources() , selectedImagePath).getBitmap();
+                Bitmap scaled = Bitmap.createScaledBitmap(d,140, 150, true);
+                scaled.compress(Bitmap.CompressFormat.JPEG, 10, bytes);
+
+                imageByte = bytes.toByteArray();
+                base64ImageUpdate = Base64.encodeToString(imageByte, Base64.NO_WRAP);
+                eventImage.setImageBitmap(scaled);
+
+                try {
+                    updateEvent(base64ImageUpdate);
+                    Toast.makeText(getApplicationContext(), "Image Successfully Updated", Toast.LENGTH_LONG).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public void populateAttendee(){
@@ -147,6 +225,7 @@ public class ViewEventActvity extends Activity{
         Intent intent = getIntent();
         Bundle eventBundle = intent.getExtras();
         eventID = eventBundle.getInt("eventID");
+
         eTitle = eventBundle.getString("eventName");
         eDesc = eventBundle.getString("eventDescription");
         eLocation = eventBundle.getString("eventLocation");
@@ -154,7 +233,6 @@ public class ViewEventActvity extends Activity{
         eToDate = eventBundle.getString("eventToDate");
         eFromTime = eventBundle.getString("eventFromTime");
         eToTime = eventBundle.getString("eventToTime");
-        eOwner = eventBundle.getString("eventOwner");
         status = (IsAttending) eventBundle.get("isAttending");
         byteArray = eventBundle.getByteArray("eventPhoto");
         boolean itemListAccess = eventBundle.getBoolean("itemList");
@@ -177,7 +255,6 @@ public class ViewEventActvity extends Activity{
            @Override
            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                if (actionId == EditorInfo.IME_ACTION_DONE) {
-
                    try {
                        eTitle = etTitle.getText().toString();
                        updateEvent(eTitle);
@@ -318,53 +395,7 @@ public class ViewEventActvity extends Activity{
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultcode, Intent intent)
-    {
-        super.onActivityResult(requestCode, resultcode, intent);
 
-        if (requestCode == 1)
-        {
-            if (intent != null && resultcode == RESULT_OK)
-            {
-
-                Uri selectedImage = intent.getData();
-
-                String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-                cursor.moveToFirst();
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                String filePath = cursor.getString(columnIndex);
-                cursor.close();
-
-                if(bmp != null && !bmp.isRecycled())
-                {
-                    bmp = null;
-                }
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                bmp = BitmapFactory.decodeFile(filePath);
-
-
-                Bitmap d = new BitmapDrawable(getApplicationContext().getResources() , filePath).getBitmap();
-                Bitmap scaled = Bitmap.createScaledBitmap(d, 140, 150, true);
-                scaled.compress(Bitmap.CompressFormat.JPEG, 10, bytes);
-                byte[] imageByte = bytes.toByteArray();
-                base64ImageUpdate = Base64.encodeToString(imageByte, Base64.NO_WRAP);
-
-                eventImage.setImageBitmap(scaled);
-                try {
-                    updateEvent(base64ImageUpdate);
-                    Toast.makeText(getApplicationContext(), "Image Successfully Updated", Toast.LENGTH_LONG).show();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            else
-            {
-                Log.d("Status:", "Photopicker canceled");
-            }
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -405,7 +436,21 @@ public class ViewEventActvity extends Activity{
         etToTime.setFocusable(false);
 
         btnLoadImg.setVisibility(View.INVISIBLE);
-        deleteEvent.setVisibility(View.GONE);
+        deleteEvent.setVisibility(View.VISIBLE);
+        deleteEvent.setText("Leave Event");
+        deleteEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    leaveEvent();
+                    Intent i = new Intent(ViewEventActvity.this, EventsListActivity.class);
+                    startActivity(i);
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public void isDeclined(){
@@ -431,6 +476,32 @@ public class ViewEventActvity extends Activity{
         btnLoadImg.setVisibility(View.GONE);
 
         btnGoing.setVisibility(View.VISIBLE);
+        deleteEvent.setVisibility(View.VISIBLE);
+        deleteEvent.setText("Leave Event");
+        deleteEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    leaveEvent();
+                    Intent i = new Intent(ViewEventActvity.this, EventsListActivity.class);
+                    startActivity(i);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        btnGoing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    answerInvite("Attending");
+                    Intent intent = new Intent(ViewEventActvity.this, EventsListActivity.class);
+                    startActivity(intent);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public void isInvited(){
@@ -488,7 +559,6 @@ public class ViewEventActvity extends Activity{
     public void isOwner() {
         tvWhoIsComing.setText("Invite People");
 
-        //addInvitee.setVisibility(View.VISIBLE);
         addMore.setVisibility(View.VISIBLE);
         deleteEvent.setVisibility(View.VISIBLE);
 
@@ -509,7 +579,7 @@ public class ViewEventActvity extends Activity{
             public void onClick(View view) {
                     Intent i = new Intent(ViewEventActvity.this, FriendsListActivity.class);
                     Bundle bundle = new Bundle();
-                    bundle.putBoolean("isFromEditEvent", isFromEditEvent);
+                    bundle.putBoolean("isFromEditEvent", true);
                     bundle.putInt("eventID", eventID);
                     i.putExtras(bundle);
                     startActivity(i);
@@ -647,10 +717,11 @@ public class ViewEventActvity extends Activity{
         });
     }
 
-    /*public void getEvent() throws JSONException {
+   /* public void getEvent() throws JSONException {
         RestClient.get("events/" + eventID, null, LoginActivity.token, new JsonHttpResponseHandler() {
             public void onSuccess(String response) {
                 JSONObject res;
+                String statusString;
                 try {
                     res = new JSONObject(response);
                     eTitle = res.getString("what");
@@ -660,9 +731,11 @@ public class ViewEventActvity extends Activity{
                     eToDate = res.getString("endDate");
                     eFromTime = res.getString("fromTime");
                     eToTime = res.getString("toTime");
-                    eOwner =
-                    status =
-                    byteArray
+                    statusString = res.getString("isAttending");
+                    status = IsAttending.valueOf(statusString.trim().toUpperCase());
+                    String base64String = res.getString("picture");
+                    Bitmap eventImg = base64ToBitmap(base64String);
+                    bmp = Bitmap.createScaledBitmap(eventImg, 140, 150, true);
 
                     Log.d("debug", res.getString("some_key")); // this is how you get a value out
                 } catch (JSONException e) {
@@ -673,6 +746,11 @@ public class ViewEventActvity extends Activity{
         });
 
     }*/
+
+    private Bitmap base64ToBitmap(String b64){
+        byte[] imageAsBytes = Base64.decode(b64.getBytes(),Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
+    }
 
     public void deleteEvent() throws JSONException {
         RestClient.delete("events/" + eventID, null, LoginActivity.token, new JsonHttpResponseHandler() {
@@ -699,6 +777,14 @@ public class ViewEventActvity extends Activity{
         startActivity(intent);
     }
 
+    public void NavMessages(View v)
+    {
+        Intent intent = new Intent(this, Messages.class);
+        intent.putExtra("token", LoginActivity.token);
+        intent.putExtra("eventID", eventID);
+        startActivity(intent);
+    }
+
     public void answerInvite(String answer)throws JSONException{
         RestClient.post("events/" + eventID + "/invite/" + answer, null, LoginActivity.token, new JsonHttpResponseHandler() {
             public void onSuccess(String response) {
@@ -713,5 +799,22 @@ public class ViewEventActvity extends Activity{
             }
         });
     }
+
+    public void leaveEvent() throws JSONException{
+        RestClient.post("events/" + eventID + "/leave", null, LoginActivity.token, new JsonHttpResponseHandler() {
+            public void onSuccess(String response) {
+                JSONObject res;
+                try {
+                    res = new JSONObject(response);
+                    Log.d("debug", res.getString("some_key")); // this is how you get a value out
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+
 
 }

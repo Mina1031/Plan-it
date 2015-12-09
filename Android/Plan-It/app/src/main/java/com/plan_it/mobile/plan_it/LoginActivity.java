@@ -48,8 +48,6 @@ public class LoginActivity extends AppCompatActivity {
         etPass=(EditText)findViewById(R.id.editTextPassword);
         etUser.setText("");
         etPass.setText("");
-        /*etUser.setText("nedstark");
-        etPass.setText("password");*/
 
 
         // Instantiate Progress Dialog object

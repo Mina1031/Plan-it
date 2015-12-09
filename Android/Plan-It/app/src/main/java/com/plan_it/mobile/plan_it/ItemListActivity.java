@@ -134,7 +134,21 @@ public class ItemListActivity extends AppCompatActivity {
             Intent intent = getIntent();
             startActivity(intent);
         }
-
+        if (id == R.id.action_friends_list)
+        {
+            Intent intent = new Intent(this, FriendsListActivity.class);
+            startActivity(intent);
+        }
+        if (id == R.id.action_add_friends)
+        {
+            Intent intent = new Intent(this, AddFriendActivity.class);
+            startActivity(intent);
+        }
+        if (id == R.id.action_create_new_event)
+        {
+            Intent intent = new Intent(this, CreateEventActivity.class);
+            startActivity(intent);
+        }
         if (id == R.id.action_logout)
         {
             LoginActivity.token = null;

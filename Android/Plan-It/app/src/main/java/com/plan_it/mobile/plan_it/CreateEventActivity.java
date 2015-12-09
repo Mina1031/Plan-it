@@ -44,6 +44,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class CreateEventActivity extends AppCompatActivity {
+    private static final int CAMERA_REQUEST = 1888;
     public String token;
     String base64Image;
     byte[] imageByte;
@@ -158,7 +159,7 @@ public class CreateEventActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_add_friend, menu);
+        getMenuInflater().inflate(R.menu.menu_create_event, menu);
         return true;
     }
 
@@ -215,8 +216,8 @@ public class CreateEventActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 if (items[item].equals("Take Photo")) {
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intent, 0);
+                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
                 } else if (items[item].equals("Choose from Library")) {
                     Intent intent = new Intent(
                             Intent.ACTION_PICK,
@@ -237,28 +238,16 @@ public class CreateEventActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            if (requestCode == 0) {
+            if (requestCode == CAMERA_REQUEST) {
                 Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                //thumbnail.compress(Bitmap.CompressFormat.JPEG, 10, bytes);
                 Bitmap scaled = Bitmap.createScaledBitmap(thumbnail, 256, 256, true);
-                scaled.compress(Bitmap.CompressFormat.JPEG, 10, bytes);
-                File destination = new File(Environment.getExternalStorageDirectory(),
-                        System.currentTimeMillis() + ".jpg");
-                FileOutputStream fo;
-                try {
-                    destination.createNewFile();
-                    fo = new FileOutputStream(destination);
-                    fo.write(bytes.toByteArray());
-                    fo.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                imageByte = bytes.toByteArray();
-                base64Image = Base64.encodeToString(imageByte, Base64.NO_WRAP);
+
                 viewImage.setImageBitmap(scaled);
+                imageByte = bytes.toByteArray();
+                scaled.compress(Bitmap.CompressFormat.JPEG, 10, bytes);
+                base64Image = Base64.encodeToString(imageByte, Base64.NO_WRAP);
+
 
             } else if (requestCode == 1) {
                 Uri selectedImageUri = data.getData();
@@ -268,17 +257,10 @@ public class CreateEventActivity extends AppCompatActivity {
                 int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
                 cursor.moveToFirst();
                 String selectedImagePath = cursor.getString(column_index);
-                Bitmap bm;
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
                 BitmapFactory.decodeFile(selectedImagePath, options);
-                /*final int REQUIRED_SIZE = 200;
-                int scale = 1;
-                while (options.outWidth / scale / 2 >= REQUIRED_SIZE
-                        && options.outHeight / scale / 2 >= REQUIRED_SIZE)
-                    scale *= 2;
-                options.inSampleSize = scale;
-                options.inJustDecodeBounds = false;*/
+
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                 Bitmap d = new BitmapDrawable(getApplicationContext().getResources() , selectedImagePath).getBitmap();
                 Bitmap scaled = Bitmap.createScaledBitmap(d,140, 150, true);

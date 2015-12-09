@@ -46,13 +46,38 @@ event.createEvent = function(req, res, next) {
 }
 
 event.getEventById = function(req, res, next) {
-  database.eventModel.findOne({
-    "EventID": req.params.id
-  }, function(err, event) {
-    if (err)
-      console.log(err);
+  // database.eventModel.findOne({
+  //   "EventID": req.params.id
+  // }, function(err, event) {
+  //   if (err)
+  //     console.log(err);
+  //   else{
+  //     res.status(200).send(event);
+  //   }
+  // });
+  console.log('hit');
+  database.userModel.findOne({token : req.headers["x-access-token"]}, function(err, token){
+    if(err)
+      console.log("error"  + err);
     else{
-      res.status(200).send(event);
+      database.eventModel.findOne({"EventID" : req.params.id}).lean().exec(function(err, events){
+        if(err)
+          console.log(err);
+        else{
+          database.eventModel.findOne({"EventID" : req.params.id}).where("members.UserId").in(token.UserID).
+          select("-_id EventID what why where when endDate picture fromTime toTime itemList totalEstCost totalActCost members").lean().exec(function(err, result){
+            console.log(result.members.length);
+            //for(var i = 0; i < result.members.length;i++){
+              for(var j = 0; j < result.members.length;j++){
+                if(result.members[j].UserId == token.UserID)
+                  result.isAttending = result.members[j].isAttending;
+                  //console.log(result[i]);
+              }
+            //}
+            res.status(200).json(result);
+          });
+        }
+      });
     }
   });
 }
@@ -312,7 +337,7 @@ event.invitation = function(req, res, next){
     if(err)
       console.log(err);
     else{
-      database.eventModel.update({"members.$.UserID" : user.UserId , "EventID" : req.params.id},
+      database.eventModel.update({$and:[{"EventID": req.params.id},{"members.UserId": user.UserID}]},
        {$set: {"members.$.isAttending" : req.params.answer}},
        function(err, event){
         if(err)

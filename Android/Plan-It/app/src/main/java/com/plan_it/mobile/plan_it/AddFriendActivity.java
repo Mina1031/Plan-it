@@ -46,8 +46,6 @@ public class AddFriendActivity extends AppCompatActivity {
 
         friendNameString = friendName.getText().toString();
 
-        Toast.makeText(getApplicationContext(),"Searching for: " + friendNameString, Toast.LENGTH_LONG).show();
-
         if(friendNameString != null && friendNameString != "") {
             RestClient.get("/search/" + friendNameString + "/friend", null, LoginActivity.token, new JsonHttpResponseHandler() {
                 @Override
@@ -90,7 +88,6 @@ public class AddFriendActivity extends AppCompatActivity {
         RequestParams jdata = new RequestParams();
         jdata.put("userID", friendId);
         jdata.put("id", userID);
-        Toast.makeText(getApplicationContext(),"Adding, " + friendNameString + " to your friends list", Toast.LENGTH_LONG).show();
         RestClient.post("/user/" + userID + "/friend", jdata, LoginActivity.token, new JsonHttpResponseHandler() {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Toast.makeText(getApplicationContext(), "Success, " + response + " has been Added to your list", Toast.LENGTH_LONG).show();
@@ -134,11 +131,7 @@ public class AddFriendActivity extends AppCompatActivity {
             Intent intent = new Intent(this, EventsListActivity.class);
             startActivity(intent);
         }
-        if(id == R.id.action_refresh)
-        {
-            Intent intent = getIntent();
-            startActivity(intent);
-        }
+
         if (id == R.id.action_logout)
         {
             LoginActivity.token = null;

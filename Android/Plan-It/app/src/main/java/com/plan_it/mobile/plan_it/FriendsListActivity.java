@@ -35,6 +35,7 @@ public class FriendsListActivity extends AppCompatActivity {
     public Context context = this;
     int userID = LoginActivity.userID;
     String token = LoginActivity.token;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,9 +61,7 @@ public class FriendsListActivity extends AppCompatActivity {
     }
 
     public void fillFriendsList()throws JSONException {
-
         removeFriend = (ImageView)findViewById(R.id.friends_list_remove);
-
         RestClient.get("/user/" + userID + "/friend", null, LoginActivity.token, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray friendsArray) {
@@ -80,41 +79,13 @@ public class FriendsListActivity extends AppCompatActivity {
                         Log.d("Friend: ", friend.toString());
                     }
 
-                    if(isFromEditEvent)
+                   /* if(isFromEditEvent)
                     {
                         removeFriend.setImageResource(R.drawable.ic_add_circle_blue_24dp);
-                    }
+                    }*/
 
                     list = (ListView)findViewById(R.id.friends_list_view);
-                    list.setAdapter(new FriendsListAdapter(context, R.layout.friends_list_item, friendsList));
-
-                    list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                            if(isFromEditEvent)
-                            {
-                                RestClient.post("/events/"+ eventID + "/invite/" + friendID, null, token, new JsonHttpResponseHandler() {
-                                    @Override
-                                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                                        super.onSuccess(statusCode, headers, response);
-                                        Toast.makeText(getApplicationContext(), "Success, Friend: " + friendName + " Was added\n" + response, Toast.LENGTH_LONG).show();
-                                    }
-
-                                    @Override
-                                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                                        super.onFailure(statusCode, headers, responseString, throwable);
-                                        Toast.makeText(getApplicationContext(), "FAILURE, Friend: " + friendName + " Could not be added\n" + responseString , Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                            }
-                            else
-                            {
-                                Toast.makeText(getApplicationContext(), "Friend: " + friendName , Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });
+                    list.setAdapter(new FriendsListAdapter(context, R.layout.friends_list_item, friendsList, eventID, isFromEditEvent));
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -178,4 +149,21 @@ public class FriendsListActivity extends AppCompatActivity {
         Intent intent = new Intent(this, FriendsListActivity.class);
         startActivity(intent);
     }
+
+    public void inviteFriend(int friendId) throws JSONException{
+        RestClient.post("/events/"+ eventID + "/invite/" + friendId, null, token, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                Toast.makeText(getApplicationContext(), "Success, Friend: " + friendName + " Was added\n" + response, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+                Toast.makeText(getApplicationContext(), "FAILURE, Friend: " + friendName + " Could not be added\n" + responseString , Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
 }

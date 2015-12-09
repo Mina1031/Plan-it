@@ -38,8 +38,8 @@
         <button class="btn-block" ng-repeat="event in eventList" ui-sref="event.details({ eventID: event.EventID })">
         <span class="glyphicon glyphicon-star" ng-show="checkOwner(event)"></span>
         <span style="color:#FF9F1C;" class="glyphicon glyphicon-envelope" ng-show="checkInvited(event)"></span>
-        <span style="color:#E71D36;" class="glyphicon glyphicon-thumbs-up" ng-show="checkAttending(event)"></span>
-        <span style="color:#2EC4B6;" class="glyphicon glyphicon-thumbs-down" ng-show="checkDeclined(event)"></span>
+        <span style="color:#2EC4B6;" class="glyphicon glyphicon-ok" ng-show="checkAttending(event)"></span>
+        <span style="color:#E71D36;" class="glyphicon glyphicon-remove" ng-show="checkDeclined(event)"></span>
         <!-- <span class="glyphicon glyphicon-camera"></span> -->
         {{event.what}}
         <br>Your Event

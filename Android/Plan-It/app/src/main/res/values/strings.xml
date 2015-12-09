@@ -62,4 +62,7 @@
     <string name="search_for_friend_instruction">Enter your friends User Name or Email Address and click Search</string>
     <string name="enter_username_email">Please Enter a Username/E-mail</string>
     <string name="add_friend">Add Friend</string>
+    <string name="title_activity_messages">Messages</string>
+    <string name="send">Send</string>
+    <string name="type_message">Type Message Here</string>
 </resources>

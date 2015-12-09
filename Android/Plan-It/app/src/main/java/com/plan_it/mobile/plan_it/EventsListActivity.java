@@ -142,6 +142,11 @@ public class EventsListActivity extends AppCompatActivity implements SearchView.
             Intent intent = new Intent(this, FriendsListActivity.class);
             startActivity(intent);
         }
+        if (id == R.id.action_add_friends)
+        {
+            Intent intent = new Intent(this, AddFriendActivity.class);
+            startActivity(intent);
+        }
         if (id == R.id.action_create_new_event)
         {
             navCreateNewEvent(view);

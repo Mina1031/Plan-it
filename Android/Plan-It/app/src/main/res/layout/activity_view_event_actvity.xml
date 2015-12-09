@@ -117,7 +117,7 @@
                     android:textSize="8dp"
                     android:id="@+id/btnChngPic"
                     android:layout_below="@+id/ivViewEventImage"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_centerHorizontal="true"/>
 
                 <ImageView
                     android:id="@+id/ivViewEventImage"
@@ -319,6 +319,7 @@
                 android:text="Messages"
                 android:id="@+id/btnViewMsgBoard"
                 android:height="20dp"
+                android:onClick="NavMessages"
                 android:layout_below="@id/attendee_list"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"/>

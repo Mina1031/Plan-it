@@ -6,15 +6,25 @@
         <!-- <span class="glyphicon glyphicon-picture" style="font-size:6em; color:#0B3B39;"> </span><br> -->
         <img class="img-thumbnail eventphoto" src="{{event.thumbnail}}">
         <br>
-        <button class="btn btn-sm btn-default btn-block" ui-sref="event.update({ eventID: event.EventID })">
-            <span class="glyphicon glyphicon-pencil"> UPDATE</span>
-        </button>
-        <button class="btn btn-sm btn-primary btn-block" ui-sref="event.addfriend({ eventID: event.EventID })">
+        <button class="btn btn-sm btn-primary btn-block" ng-show="checkOwner(event.isAttending)" ui-sref="event.addfriend({ eventID: event.EventID })">
             <span class="glyphicon glyphicon-pencil"> INVITE</span>
         </button>
-        <button class="btn btn-sm btn-danger btn-block" ng-click="deleteEvent()">
-            <span class="glyphicon glyphicon-trash"> CANCEL</span>
-        </button><br>
+        <button class="btn btn-sm btn-default btn-block" ng-show="checkOwner(event.isAttending)" ui-sref="event.update({ eventID: event.EventID })">
+            <span class="glyphicon glyphicon-pencil"> UPDATE</span>
+        </button>
+        <button class="btn btn-sm btn-danger btn-block" ng-show="checkOwner(event.isAttending)" ng-click="deleteEvent()">
+            <span class="glyphicon glyphicon-trash"> DELETE</span>
+        </button>
+        <button class="btn btn-sm btn-default btn-block" ng-show="!checkOwner(event.isAttending)" ng-click="attendEvent()">
+            <span class="glyphicon glyphicon-ok"> ATTEND</span>
+        </button>
+        <button class="btn btn-sm btn-danger btn-block" ng-show="!checkOwner(event.isAttending)" ng-click="declineEvent()">
+            <span class="glyphicon glyphicon-remove"> DECLINE</span>
+        </button>
+        <button class="btn btn-sm btn-primary btn-block" ng-show="!checkOwner(event.isAttending)" ng-click="leaveEvent()">
+            <span class="glyphicon glyphicon-trash"> LEAVE</span>
+        </button>
+        <br>
         <!-- 'Leave' technically means 'Delete' for admin  -->
         <!-- <span class="glyphicon glyphicon-bell"> 2</span> -->
     </div>
@@ -32,11 +42,11 @@
         <div class="invitee">
 
         <div style="padding-left:40px;" ng-repeat="member in memberList">
-        <span class="glyphicon glyphicon-star" ng-show="checkOwner(member)"></span>
-        <span class="glyphicon glyphicon-envelope" ng-show="checkInvited(member)"></span>
-        <span class="glyphicon glyphicon-thumbs-up" ng-show="checkAttending(member)"></span>
-        <span class="glyphicon glyphicon-thumbs-down" ng-show="checkDeclined(member)"></span>
-        <span class="glyphicon glyphicon-remove" ng-show="checkLeft(member)"></span> {{member.friendlyName}}</div>
+        <span class="glyphicon glyphicon-star" ng-show="checkOwner(member.isAttending)"></span>
+        <span class="glyphicon glyphicon-envelope" ng-show="checkInvited(member.isAttending)"></span>
+        <span class="glyphicon glyphicon-thumbs-up" ng-show="checkAttending(member.isAttending)"></span>
+        <span class="glyphicon glyphicon-thumbs-down" ng-show="checkDeclined(member.isAttending)"></span>
+        <span class="glyphicon glyphicon-remove" ng-show="checkLeft(member.isAttending)"></span> {{member.friendlyName}}</div>
 
         <br>
         <!-- <span style="padding-left:40px;" class="glyphicon glyphicon-star"></span> Joanne Tanson<br>

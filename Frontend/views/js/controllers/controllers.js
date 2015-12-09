@@ -226,7 +226,7 @@ angular.module('controller', [])
 
 })
 
-.controller('EventDetailsController', function ($window, $scope, $stateParams, ServiceForEvents, ServiceForUser){
+.controller('EventDetailsController', function ($window, $location, $scope, $stateParams, ServiceForEvents, ServiceForUser){
   $scope.id = $stateParams.eventID;
   ServiceForEvents.setEvent($scope.id);
   $scope.token = ServiceForUser.getToken();
@@ -248,27 +248,27 @@ angular.module('controller', [])
   );
 
   $scope.checkOwner = function (toCheck) {
-    if (toCheck.isAttending == "Owner") { 
+    if (toCheck == "Owner") { 
       return true;
     }
   }
   $scope.checkInvited = function (toCheck) {
-    if (toCheck.isAttending == "Invited") { 
+    if (toCheck == "Invited") { 
       return true;
     }
   }
   $scope.checkAttending = function (toCheck) {
-    if (toCheck.isAttending == "Attending") { 
+    if (toCheck == "Attending") { 
       return true;
     }
   }
   $scope.checkDeclined = function (toCheck) {
-    if (toCheck.isAttending == "Declined") { 
+    if (toCheck == "Declined") { 
       return true;
     }
   }
   $scope.checkLeft = function (toCheck) {
-    if (toCheck.isAttending == "Left") { 
+    if (toCheck == "Left") { 
       return true;
     }
   }
@@ -282,7 +282,35 @@ angular.module('controller', [])
     if (confirm("Are you sure you want to delete the event?") == true)
         ServiceForEvents.deleteEvent($scope.id, $scope.token).success(function (data) {});
     $window.location.reload();
+    $location.path('event');
   };
+  $scope.leaveEvent = function () {
+    $scope.token = ServiceForUser.getToken();
+
+    console.log("about to leave event")
+    if (confirm("Are you sure you want to leave the event?") == true)
+        ServiceForEvents.leaveEvent($scope.id, $scope.token).success(function (data) {});
+    $window.location.reload();
+    $location.path('event');
+  };
+
+  $scope.attendEvent = function () {
+    $scope.token = ServiceForUser.getToken();
+
+    console.log("about to attend event invitation")
+    ServiceForEvents.answerInvitation($scope.id, "Attending", $scope.token).success(function (data) {});
+    $window.location.reload();
+    $location.path('event');
+  };
+  $scope.declineEvent = function () {
+    $scope.token = ServiceForUser.getToken();
+
+    console.log("about to decline event invitation")
+    ServiceForEvents.answerInvitation($scope.id, "Declined", $scope.token).success(function (data) {});
+    $window.location.reload();
+    $location.path('event');
+  };
+
 
 })
 

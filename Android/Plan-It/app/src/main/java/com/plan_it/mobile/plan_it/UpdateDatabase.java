@@ -17,18 +17,25 @@ import org.json.JSONObject;
 public class UpdateDatabase {
 
     public static void UpdateInvitation(IsAttending isAttending, int button, int eventID) throws JSONException {
-        RequestParams jdata = new RequestParams();
-
-        if (isAttending.equals("LEFT")) {
-            jdata.put("isAttending", "Attending");
-        } else if (isAttending.equals("DECLINED")) {
-            jdata.put("isAttending", "Attending");
-        } else if (isAttending.equals("INVITED") && button == 1) {
-            jdata.put("isAttending", "Attending");
-        } else if (isAttending.equals("ATTENDING") || isAttending.equals("INVITED") && button == 2) {
-            jdata.put("isAttending", "Declined");
+        String answer = "";
+        if (isAttending.equals("LEFT"))
+        {
+            answer = "Attending";
         }
-        RestClient.put("events/" + eventID, jdata, LoginActivity.token, new JsonHttpResponseHandler() {
+        else if (isAttending.equals("DECLINED"))
+        {
+            answer = "Attending";
+        }
+        else if (isAttending.equals("INVITED") && button == 1)
+        {
+            answer = "Attending";
+        }
+        else if (isAttending.equals("ATTENDING") || isAttending.equals("INVITED") && button == 2)
+        {
+            answer = "Declined";
+        }
+
+        RestClient.put("events/" + eventID + "/invite/" + answer, null, LoginActivity.token, new JsonHttpResponseHandler() {
             public void onSuccess(String response) {
                 JSONObject res;
                 try {

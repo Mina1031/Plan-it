@@ -2,7 +2,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.plan_it.mobile.plan_it.ItemListActivity">
+
+    <item android:id="@+id/action_create_new_event" android:title="@string/title_activity_create_event"
+        android:orderInCategory="200" app:showAsAction="never" android:icon="@drawable/ic_add_circle_blue_24dp"/>
+
+    <item android:id="@+id/action_friends_list" android:title="@string/title_activity_friends_list"
+        android:orderInCategory="300" app:showAsAction="never" />
+
+    <item android:id="@+id/action_add_friends" android:title="@string/title_activity_add_friend"
+        android:orderInCategory="400" app:showAsAction="never" />
+
     <item android:id="@+id/action_refresh" android:title="Refresh View"
-        android:orderInCategory="100" app:showAsAction="never" />
+        android:orderInCategory="500" app:showAsAction="never" />
+
+    <item android:id="@+id/action_logout" android:title="Logout"
+        android:orderInCategory="600" app:showAsAction="never" />
 
 </menu>
