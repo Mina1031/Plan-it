@@ -319,10 +319,10 @@
                 android:text="Messages"
                 android:id="@+id/btnViewMsgBoard"
                 android:height="20dp"
-                android:onClick="NavMessages"
                 android:layout_below="@id/attendee_list"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"/>
+                android:layout_alignParentBottom="true"
+                android:onClick="navMessages"/>
 
             <Button
                 android:layout_width="150dp"

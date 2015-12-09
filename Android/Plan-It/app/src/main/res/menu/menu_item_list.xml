@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.plan_it.mobile.plan_it.ItemListActivity">
 
+    <item android:id="@+id/action_event_list" android:title="@string/title_activity_events_list"
+        android:orderInCategory="100" app:showAsAction="never" />
+
     <item android:id="@+id/action_create_new_event" android:title="@string/title_activity_create_event"
         android:orderInCategory="200" app:showAsAction="never" android:icon="@drawable/ic_add_circle_blue_24dp"/>
 

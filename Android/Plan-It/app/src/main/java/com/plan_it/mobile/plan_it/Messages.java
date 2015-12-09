@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -19,7 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Messages extends AppCompatActivity {
-
+    ListView listView;
     EditText txt_message;
     String message = "";
     String token;
@@ -29,9 +30,12 @@ public class Messages extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getExtras();
-        setContentView(R.layout.activity_messages);
+
         txt_message = (EditText)findViewById(R.id.txt_message);
         ImageButton send = (ImageButton)findViewById(R.id.btn_send_message);
+        listView = (ListView)findViewById(R.id.messages_list_view);
+
+        setContentView(R.layout.activity_messages);
     }
 
     @Override
@@ -48,11 +52,38 @@ public class Messages extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if(id == R.id.action_refresh)
+        {
+            Intent intent = getIntent();
+            startActivity(intent);
         }
-
+        if (id == R.id.action_event_list)
+        {
+            Intent intent = new Intent(this, EventsListActivity.class);
+            startActivity(intent);
+        }
+        if (id == R.id.action_friends_list)
+        {
+            Intent intent = new Intent(this, FriendsListActivity.class);
+            startActivity(intent);
+        }
+        if (id == R.id.action_add_friends)
+        {
+            Intent intent = new Intent(this, AddFriendActivity.class);
+            startActivity(intent);
+        }
+        if (id == R.id.action_create_new_event)
+        {
+            Intent intent = new Intent(this, CreateEventActivity.class);
+            startActivity(intent);
+        }
+        if (id == R.id.action_logout)
+        {
+            LoginActivity.token = null;
+            LoginActivity.userID = 0;
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -61,6 +92,11 @@ public class Messages extends AppCompatActivity {
         Bundle b = intent.getExtras();
         token = b.getString("token");
         eventID = b.getInt("eventID");
+    }
+
+    public void GetMessages()
+    {
+
     }
 
     public void SendMessage(View v)

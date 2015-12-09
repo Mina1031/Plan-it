@@ -777,7 +777,7 @@ public class ViewEventActvity extends Activity{
         startActivity(intent);
     }
 
-    public void NavMessages(View v)
+    public void navMessages(View v)
     {
         Intent intent = new Intent(this, Messages.class);
         intent.putExtra("token", LoginActivity.token);

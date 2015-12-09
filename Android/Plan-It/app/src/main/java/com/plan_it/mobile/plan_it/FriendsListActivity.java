@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -144,14 +145,14 @@ public class FriendsListActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AddFriendActivity.class);
         startActivity(intent);
     }
-    public void NavToFriendList(View v)
+    public void Refresh()
     {
-        Intent intent = new Intent(this, FriendsListActivity.class);
+        Intent intent = getIntent();
         startActivity(intent);
     }
 
     public void inviteFriend(int friendId) throws JSONException{
-        RestClient.post("/events/"+ eventID + "/invite/" + friendId, null, token, new JsonHttpResponseHandler() {
+        RestClient.post("/events/" + eventID + "/invite/" + friendId, null, token, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 super.onSuccess(statusCode, headers, response);
@@ -161,9 +162,26 @@ public class FriendsListActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 super.onFailure(statusCode, headers, responseString, throwable);
-                Toast.makeText(getApplicationContext(), "FAILURE, Friend: " + friendName + " Could not be added\n" + responseString , Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "FAILURE, Friend: " + friendName + " Could not be added\n" + responseString, Toast.LENGTH_LONG).show();
             }
         });
     }
+    public void RemoveFriend(int id, int friendId)
+    {
+        RequestParams jdata = new RequestParams();
+        jdata.put("userID", friendId);
+        jdata.put("id", id);
+        Log.d("Removing User: ", Integer.toString(id));
+        RestClient.delete("/user/" + id + "/friend/" + friendId, jdata, LoginActivity.token, new JsonHttpResponseHandler() {
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Toast.makeText(context, "Success, " + response + " has been removed from your list", Toast.LENGTH_LONG).show();
+            }
 
+            @Override
+            public void onFailure(int statusCode, Header[] header, Throwable throwable, JSONObject response) {
+                Toast.makeText(context, "Failure, Unable to remove: " + response, Toast.LENGTH_LONG).show();
+            }
+        });
+    Refresh();
+    }
 }

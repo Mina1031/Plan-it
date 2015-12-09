@@ -134,6 +134,11 @@ public class ItemListActivity extends AppCompatActivity {
             Intent intent = getIntent();
             startActivity(intent);
         }
+        if (id == R.id.action_event_list)
+        {
+            Intent intent = new Intent(this, EventsListActivity.class);
+            startActivity(intent);
+        }
         if (id == R.id.action_friends_list)
         {
             Intent intent = new Intent(this, FriendsListActivity.class);

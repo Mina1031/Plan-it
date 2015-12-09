@@ -286,4 +286,10 @@ public class EventsListActivity extends AppCompatActivity implements SearchView.
         Intent intent = new Intent(this, CreateEventActivity.class);
         startActivity(intent);
     }
+    public void DeleteEvent(String isAttending, int eventID, String eventName)
+    {
+        UpdateDatabase.DeleteEvent(isAttending, eventID);
+        Toast.makeText(this, "Deleting: " + eventName + " Refresh List from menu",
+                Toast.LENGTH_LONG).show();
+    }
 }

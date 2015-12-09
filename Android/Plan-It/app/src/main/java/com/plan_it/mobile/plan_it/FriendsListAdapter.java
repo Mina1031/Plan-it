@@ -81,7 +81,7 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
                     alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            RemoveFriend(LoginActivity.userID, friendsList.get(position).UserID);
+                            ((FriendsListActivity)context).RemoveFriend(LoginActivity.userID, friendsList.get(position).UserID);
                             dialog.dismiss();
                         }
                     });
@@ -115,23 +115,7 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
         TextView txtFriendID;
         ImageView removeFriend;
     }
-    public void RemoveFriend(int id, int friendId)
-    {
-        RequestParams jdata = new RequestParams();
-        jdata.put("userID", friendId);
-        jdata.put("id", id);
-        Log.d("Removing User: ", Integer.toString(id));
-        RestClient.delete("/user/" + id + "/friend/" + friendId, jdata, LoginActivity.token, new JsonHttpResponseHandler() {
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Toast.makeText(context, "Success, " + response + " has been removed from your list", Toast.LENGTH_LONG).show();
-            }
 
-            @Override
-            public void onFailure(int statusCode, Header[] header, Throwable throwable, JSONObject response) {
-                Toast.makeText(context, "Failure, Unable to remove: " + response, Toast.LENGTH_LONG).show();
-            }
-        });
-    }
 
     public void inviteFriend(int eventid, int friendid){
         RestClient.post("/events/" + eventid + "/invite/" + friendid, null, LoginActivity.token, new JsonHttpResponseHandler() {
