@@ -2,6 +2,7 @@ package com.plan_it.mobile.plan_it;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,7 +30,7 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
-public class ItemListActivity extends AppCompatActivity {
+public class ItemListActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     int split = 1;
     private List<Item> mItems;
     private ItemListAdapter adapter;
@@ -47,6 +48,8 @@ public class ItemListActivity extends AppCompatActivity {
     TextView splitNumber;
     ImageView minusSplit;
     ImageView addSplit;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     Double totalActualCost;
     Double totalEstimatedCost;
@@ -76,7 +79,21 @@ public class ItemListActivity extends AppCompatActivity {
 
         initializeData();
 
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout_item_list);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
+    }
+
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+        try {
+            getItemList();
+            swipeRefreshLayout.setRefreshing(false);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

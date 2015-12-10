@@ -165,6 +165,7 @@ angular.module('controller', [])
   $scope.id = $stateParams.eventID;
   $scope.currentUserID = ServiceForUser.getUser();
   $scope.friendList;
+  $scope.eventNumber;
   console.log("my id: " + $scope.currentUserID);
 
     ServiceForUser.getAllFriends($scope.currentUserID, $scope.token).success(function (data)
@@ -187,7 +188,7 @@ angular.module('controller', [])
   }
 })
 
-.controller('EventListController', function ($scope, ServiceForEvents, ServiceForUser){
+.controller('EventListController', function ($scope, ServiceForEvents, ServiceForUser, $location){
   $scope.token = ServiceForUser.getToken();
   console.log($scope.token);
   // $scope.event;
@@ -198,29 +199,52 @@ angular.module('controller', [])
   }
   );
 
+  $scope.setEventID = function(eventID)
+  {
+    ServiceForEvents.setEvent(eventID);
+    console.log("Set Event ID: " + eventID)
+  }
+
+  $scope.getEventDetails = function()
+  {
+    $scope.eventNumber = ServiceForEvents.getEvent();
+    console.log("Event ID is:" + $scope.eventNumber);
+  }
+
   $scope.checkOwner = function (toCheck) {
-    if (toCheck.isAttending == "Owner") { 
+    if (toCheck.isAttending == "Owner") {
       return true;
     }
   }
   $scope.checkInvited = function (toCheck) {
-    if (toCheck.isAttending == "Invited") { 
+    if (toCheck.isAttending == "Invited") {
       return true;
     }
   }
   $scope.checkAttending = function (toCheck) {
-    if (toCheck.isAttending == "Attending") { 
+    if (toCheck.isAttending == "Attending") {
       return true;
     }
   }
   $scope.checkDeclined = function (toCheck) {
-    if (toCheck.isAttending == "Declined") { 
+    if (toCheck.isAttending == "Declined") {
       return true;
     }
   }
   $scope.checkLeft = function (toCheck) {
-    if (toCheck.isAttending == "Left") { 
+    if (toCheck.isAttending == "Left") {
       return true;
+    }
+  }
+
+  $scope.checkEventID = function()
+  {
+    if(ServiceForEvents.getEvent() != "")
+    {
+      return true;
+    }
+    else {
+      return false;
     }
   }
 
@@ -248,27 +272,27 @@ angular.module('controller', [])
   );
 
   $scope.checkOwner = function (toCheck) {
-    if (toCheck == "Owner") { 
+    if (toCheck == "Owner") {
       return true;
     }
   }
   $scope.checkInvited = function (toCheck) {
-    if (toCheck == "Invited") { 
+    if (toCheck == "Invited") {
       return true;
     }
   }
   $scope.checkAttending = function (toCheck) {
-    if (toCheck == "Attending") { 
+    if (toCheck == "Attending") {
       return true;
     }
   }
   $scope.checkDeclined = function (toCheck) {
-    if (toCheck == "Declined") { 
+    if (toCheck == "Declined") {
       return true;
     }
   }
   $scope.checkLeft = function (toCheck) {
-    if (toCheck == "Left") { 
+    if (toCheck == "Left") {
       return true;
     }
   }
@@ -419,22 +443,22 @@ angular.module('controller', [])
       $scope.actualTotal = parseFloat(actualCost);
       $scope.estimatedTotal = parseFloat(estimatedCost);
     }
-    
+
     $scope.divideTotal = function (num) {
       $scope.actualSplit = parseFloat(actualCost/num).toFixed(2);
       $scope.estimatedSplit = parseFloat(estimatedCost/num).toFixed(2);
     }
-    
+
 
   }
   );
 
   $scope.checkClaimed = function (toClaim) {
 
-    if (toClaim.hasOwnProperty('whoseBringing')) { 
+    if (toClaim.hasOwnProperty('whoseBringing')) {
       // $scope.claimed = true;
       return true;
-      console.log ("claimed"); 
+      console.log ("claimed");
     }
   }
 
@@ -484,8 +508,32 @@ angular.module('controller', [])
 .controller('AccountController', function ($scope, $location)
 {
 
-}
-)
+})
+.controller('EventChatController', function($scope, $window, $location, ServiceForMessages, ServiceForUser, ServiceForEvents){
+  $scope.token = ServiceForUser.getToken();
+  $scope.currentEvent = ServiceForEvents.getEvent();
+  $scope.chat = {};
+
+  ServiceForMessages.getMessages($scope.currentEvent, 1, $scope.token).success(function(data)
+  {
+    if(data[0])
+    {
+    $scope.messageList = data[0].messages;
+    console.log(data);
+    console.log(data[0].messages)
+    }
+  })
+
+  $scope.sendMessage = function(chat){
+    ServiceForMessages.sendMessage($scope.chat, $scope.currentEvent, $scope.token).success(function(data)
+  {
+    console.log("Message sent.");
+    $scope.chat.message = "";
+    $window.location.reload();
+  })
+  }
+})
+
 // angular.module('userController', [])
 .controller('RegisterUserController', function ($scope, $location, ServiceForUser) {
 

@@ -2,6 +2,7 @@ package com.plan_it.mobile.plan_it;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -20,7 +21,7 @@ import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
 
-public class AddFriendActivity extends AppCompatActivity {
+public class AddFriendActivity extends AppCompatActivity{
     int friendId;
     int userID;
     TextView searchResult;
@@ -28,6 +29,7 @@ public class AddFriendActivity extends AppCompatActivity {
     String friendNameString = "";
     Button addFriend;
     Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +38,6 @@ public class AddFriendActivity extends AppCompatActivity {
         userID = LoginActivity.userID;
         context = this;
     }
-
     public void SearchForFriend(View v)
     {
         searchResult.setText("");

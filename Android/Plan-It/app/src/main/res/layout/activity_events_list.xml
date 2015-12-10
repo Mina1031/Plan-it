@@ -3,24 +3,29 @@
     android:layout_height="match_parent"
     tools:context="com.plan_it.mobile.plan_it.EventsListActivity"
     >
-
-    <android.support.v7.widget.RecyclerView
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/events_list_recycler_view"
-        android:paddingBottom="100dp"
-        android:clipToPadding="false"
-        />
+        android:layout_height="wrap_content">
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/events_list_recycler_view"
+            android:paddingBottom="100dp"
+            android:clipToPadding="false"
+            />
 
-    <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:clickable="true"
-        android:id="@+id/event_list_add_button"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="16dp"
-        android:onClick="navCreateNewEvent"
-        android:src="@drawable/ic_add_circle_blue_24dp"
-        />
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:clickable="true"
+            android:id="@+id/event_list_add_button"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="16dp"
+            android:onClick="navCreateNewEvent"
+            android:src="@drawable/ic_add_circle_blue_24dp"
+            />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 </RelativeLayout>

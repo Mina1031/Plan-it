@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,9 +31,7 @@ import java.util.Random;
 
 import cz.msebera.android.httpclient.Header;
 
-public class EventsListActivity extends AppCompatActivity implements SearchView.OnQueryTextListener{
-
-    Token tokenClass = new Token();
+public class EventsListActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SwipeRefreshLayout.OnRefreshListener{
 
     public View view;
     private List<Event> mEvents;
@@ -40,18 +39,13 @@ public class EventsListActivity extends AppCompatActivity implements SearchView.
     private RecyclerView events_recycler_view;
     public String token;
     public int userid;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = getIntent();
-        /*Bundle bundle = intent.getExtras();
-        token = bundle.getString("token");
-        userid = bundle.getInt("userID");*/
-        //token = LoginActivity.token;
-        //userid = LoginActivity.userID;
-
-        //token = intent.getStringExtra("token");
         try {
             getEventsList();
 
@@ -60,7 +54,23 @@ public class EventsListActivity extends AppCompatActivity implements SearchView.
         }
         setContentView(R.layout.activity_events_list);
 
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
+
+
+    }
+
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+        try {
+            getEventsList();
+            swipeRefreshLayout.setRefreshing(false);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -240,9 +250,9 @@ public class EventsListActivity extends AppCompatActivity implements SearchView.
         return BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
     }
     public void getEventsList() throws JSONException {
-        //"eyJhbGciOiJIUzI1NiJ9.am9uc25vdw.zO7Yc05XZ46VWWO-F0IUw6WKGivCQMuPjXYC5n8mElM"
         token = LoginActivity.token;
         RestClient.get("events/user",null,token , new JsonHttpResponseHandler() {
+
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray eventsList) {
                 // Pull out the first event on the public timeline
@@ -262,7 +272,6 @@ public class EventsListActivity extends AppCompatActivity implements SearchView.
                         mEvents.add(new Event(firstEvent.getInt("EventID"), firstEvent.getString("what"), "Kevin Murphy", firstEvent.getString("why"), firstEvent.getString("where"), scaledImage, firstEvent.getString("when"), firstEvent.getString("endDate"),firstEvent.getString("fromTime"), firstEvent.getString("toTime"), status, true, true));
                                 Log.d("RestD", firstEvent.toString());
                     }
-
                      adapter = new EventsListAdapter( getApplicationContext(), mEvents);
                      events_recycler_view = (RecyclerView)findViewById(R.id.events_list_recycler_view);
                      LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());

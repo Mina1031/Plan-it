@@ -12,6 +12,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputType;
@@ -49,7 +50,7 @@ import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
 
-public class ViewEventActvity extends Activity{
+public class ViewEventActvity extends Activity implements SwipeRefreshLayout.OnRefreshListener{
 
     private static final int CAMERA_REQUEST = 1888;
 
@@ -91,12 +92,13 @@ public class ViewEventActvity extends Activity{
     public ArrayList<Members> mList;
     ListView attendeeList;
     Context context = this;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_event_actvity);
 
-       // getBundleValues();
         addMore = (Button)findViewById(R.id.btn_invite_more);
         tvWhoIsComing = (TextView)findViewById(R.id.tvWhoIsComing);
         etTitle = (EditText)findViewById(R.id.etViewEventTitle);
@@ -115,8 +117,6 @@ public class ViewEventActvity extends Activity{
         Intent intent = getIntent();
         Bundle eventBundle = intent.getExtras();
         eventID = eventBundle.getInt("eventID");
-
-
         try {
             getEvent(eventID);
         }
@@ -139,11 +139,25 @@ public class ViewEventActvity extends Activity{
             }
         });
         onEdit();
-      //  initializeData();
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout_view_event);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
 
 
     }
 
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+        try {
+            getEvent(eventID);
+            swipeRefreshLayout.setRefreshing(false);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     public void imageOption(){
         final CharSequence[] items = {"Take Photo", "Choose from Library", "Cancel"};
         AlertDialog.Builder builder = new AlertDialog.Builder(ViewEventActvity.this);
@@ -230,43 +244,6 @@ public class ViewEventActvity extends Activity{
             e.printStackTrace();
         }
     }
-
-    public void getBundleValues(){
-        Intent intent = getIntent();
-        Bundle eventBundle = intent.getExtras();
-        eventID = eventBundle.getInt("eventID");
-
-
-        try {
-            getEvent(eventID);
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        /*eTitle = eventBundle.getString("eventName");
-        eDesc = eventBundle.getString("eventDescription");
-        eLocation = eventBundle.getString("eventLocation");
-        eFromDate = eventBundle.getString("eventFromDate");
-        eToDate = eventBundle.getString("eventToDate");
-        eFromTime = eventBundle.getString("eventFromTime");
-        eToTime = eventBundle.getString("eventToTime");
-        status = (IsAttending) eventBundle.get("isAttending");
-        byteArray = eventBundle.getByteArray("eventPhoto");
-        boolean itemListAccess = eventBundle.getBoolean("itemList");
-        boolean messageBoardAccess = eventBundle.getBoolean("messageBoard");*/
-    }
-    /*public void initializeData(){
-        etTitle.setText(eTitle);
-        etDesc.setText(eDesc);
-        etLocation.setText(eLocation);
-        etFromDate.setText(eFromDate);
-        etToDate.setText(eToDate);
-        etFromTime.setText(eFromTime);
-        etToTime.setText(eToTime);
-//        bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-        eventImage.setImageBitmap(bmp);
-    }*/
 
     public void onEdit(){
        etTitle.setOnEditorActionListener(new TextView.OnEditorActionListener() {

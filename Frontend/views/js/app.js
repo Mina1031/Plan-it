@@ -48,10 +48,10 @@ app.config(['$stateProvider','$urlRouterProvider',
             }
         })
         .state('event.chat', {
-            url: '',
+            url: '/chat',
             views: {
                 'rightView': {
-                    templateUrl: 'event.chat.html'
+                    templateUrl: 'event.chat.html', controller: 'EventChatController'
                 }
             }
         })

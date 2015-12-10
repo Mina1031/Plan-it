@@ -1,12 +1,12 @@
-<div ng-controller="eventChatController">
-    
+<div ng-controller="EventChatController">
+
     <ul class="messages">
-        <li ng-repeat="msg in msgs track by $index">{{msg}}</li>
+        <li ng-repeat="msg in messageList track by $index">{{msg.Message}}  --  {{msg.userID}} -- {{msg.time}}</li>
     </ul>
 
     <form class="chat" ng-submit="sendMsg()">
-        <input class="inputMessage" placeholder="Type message..." type="text" ng-model="chat.msg"/>
-        <input class="sendButton" type="submit" value="SEND" />
+        <input class="inputMessage" placeholder="Type message..." type="text" ng-model="chat.message"/>
+        <input class="sendButton" ng-click="sendMessage(chat)" type="submit" value="SEND" />
     </form>
-    
+
 </div>

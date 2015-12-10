@@ -85,18 +85,6 @@ public class EventsListAdapter extends RecyclerView.Adapter<EventsListAdapter.Ev
 
                    Bundle eventBundle = new Bundle();
                    eventBundle.putInt("eventID", eveID);
-                   eventBundle.putString("eventName", name.getText().toString());
-                   eventBundle.putString("eventDescription", description.getText().toString());
-                   eventBundle.putString("eventLocation", location);
-                   eventBundle.putString("eventFromDate", fromDate.getText().toString());
-                   eventBundle.putString("eventToDate", toDate);
-                   eventBundle.putString("eventToTime", toTime);
-                   eventBundle.putString("eventFromTime", fromTime);
-                   eventBundle.putString("eventOwner", owner.getText().toString());
-                   eventBundle.putBoolean("itemList", itemList);
-                   eventBundle.putBoolean("messageBoard", messageBoard);
-                   eventBundle.putSerializable("isAttending", isAttending);
-                   eventBundle.putByteArray("eventPhoto", byteArray);
 
                    Intent intent = new Intent(context, ViewEventActvity.class);
                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

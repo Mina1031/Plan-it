@@ -60,7 +60,16 @@ angular.module('services', ['ngCookies'])
     }
 }
 ])
-
+.service("ServiceForMessages" , ['$http', function ($http) {
+    this.getMessages = function(eventid, msgid, token)
+    {
+      return $http({url:'http://planit.lukefarnell.CA:3000/message/' + eventid + '/id/' + msgid, method: "GET", headers: {'x-access-token': token}});
+    }
+    this.sendMessage = function(message, eventid, token)
+    {
+      return $http({url:'http://planit.lukefarnell.CA:3000/message/' + eventid, data: message, method: "POST", headers: {'x-access-token': token}});
+    }
+}])
 .service("ServiceForUser", ['$http', '$cookies', '$location', function ($http, $cookies, $location) {
     var token = "";
 
@@ -117,6 +126,7 @@ angular.module('services', ['ngCookies'])
     {
       $cookies.token = "";
       $cookies.userID = "";
+      $cookies.eventID = "";
     }
     this.setUser = function(value)
     {
