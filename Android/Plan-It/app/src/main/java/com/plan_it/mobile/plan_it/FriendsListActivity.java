@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -28,7 +27,6 @@ import cz.msebera.android.httpclient.Header;
 public class FriendsListActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener{
     public ArrayList<FriendListModel> friendsList = new ArrayList<>();
     ListView list;
-    ImageView removeFriend;
     boolean isFromEditEvent = false;
     int eventID;
     int friendID;
@@ -78,7 +76,6 @@ public class FriendsListActivity extends AppCompatActivity implements SwipeRefre
 
     public void fillFriendsList()throws JSONException {
 
-        removeFriend = (ImageView)findViewById(R.id.friends_list_remove);
         RestClient.get("/user/" + userID + "/friend", null, LoginActivity.token, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray friendsArray) {
@@ -93,11 +90,6 @@ public class FriendsListActivity extends AppCompatActivity implements SwipeRefre
                         friendName = friend.getString("friendlyName");
                         Log.d("Friend: ", friend.toString());
                     }
-
-                   /* if(isFromEditEvent)
-                    {
-                        removeFriend.setImageResource(R.drawable.ic_add_circle_blue_24dp);
-                    }*/
 
                     list = (ListView)findViewById(R.id.friends_list_view);
                     list.setAdapter(new FriendsListAdapter(context, R.layout.friends_list_item, friendsList, eventID, isFromEditEvent));

@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -31,8 +33,8 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
     ArrayList<FriendListModel> friendsList;
     Context context;
     int resource;
+    int i = 0;
     FriendHolder friend;
-    FriendsListActivity fla;
     boolean isFromEditEvent;
     int eventID;
     View view;
@@ -48,7 +50,7 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
     public View getView(final int position, View view, ViewGroup parent) {
         this.view = view;
         View rowView = view;
-        final int i = position;
+        i++;
         if(rowView == null)
         {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
@@ -73,7 +75,6 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
                 @Override
                 public void onClick(View v) {
 
-
                     AlertDialog.Builder alert = new AlertDialog.Builder(
                             context);
                     alert.setTitle("Alert!!");
@@ -81,7 +82,7 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
                     alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            ((FriendsListActivity)context).RemoveFriend(LoginActivity.userID, friendsList.get(position).UserID);
+                            ((FriendsListActivity) context).RemoveFriend(LoginActivity.userID, friendsList.get(position).UserID);
                             dialog.dismiss();
                         }
                     });
@@ -93,6 +94,7 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
                     });
                     alert.show();
                     notifyDataSetChanged();
+
                 }
             });
         }
@@ -101,9 +103,15 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
             friend.removeFriend.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    inviteFriend(eventID, friendsList.get(position).UserID);
+                    try {
+                        ((FriendsListActivity) context).inviteFriend(friendsList.get(position).UserID);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    notifyDataSetChanged();
                 }
             });
+
         }
         rowView.setTag(friend);
 
@@ -115,22 +123,4 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
         TextView txtFriendID;
         ImageView removeFriend;
     }
-
-
-    public void inviteFriend(int eventid, int friendid){
-        RestClient.post("/events/" + eventid + "/invite/" + friendid, null, LoginActivity.token, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                super.onSuccess(statusCode, headers, response);
-                Toast.makeText(context, "Success, Friend: " + response + " Was added\n", Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                super.onFailure(statusCode, headers, responseString, throwable);
-                Toast.makeText(context, "FAILURE: " + responseString, Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
 }
