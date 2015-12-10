@@ -96,7 +96,7 @@ public class ViewEventActvity extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_event_actvity);
 
-        getBundleValues();
+       // getBundleValues();
         addMore = (Button)findViewById(R.id.btn_invite_more);
         tvWhoIsComing = (TextView)findViewById(R.id.tvWhoIsComing);
         etTitle = (EditText)findViewById(R.id.etViewEventTitle);
@@ -112,6 +112,19 @@ public class ViewEventActvity extends Activity{
         btnNotGoing = (Button)findViewById(R.id.btnDecline);
         deleteEvent = (Button)findViewById(R.id.btnViewDeleteEvent);
 
+        Intent intent = getIntent();
+        Bundle eventBundle = intent.getExtras();
+        eventID = eventBundle.getInt("eventID");
+
+
+        try {
+            getEvent(eventID);
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+
         attendeeList = (ListView)findViewById(R.id.attendee_list);
 
         populateAttendee();
@@ -126,12 +139,9 @@ public class ViewEventActvity extends Activity{
             }
         });
         onEdit();
-        initializeData();
+      //  initializeData();
 
-        if(status == IsAttending.ATTENDING){isAttending();}
-        else if(status == IsAttending.INVITED){isInvited();}
-        else if(status == IsAttending.OWNER){isOwner();}
-        else if(status == IsAttending.DECLINED){isDeclined();}
+
     }
 
     public void imageOption(){
@@ -226,7 +236,15 @@ public class ViewEventActvity extends Activity{
         Bundle eventBundle = intent.getExtras();
         eventID = eventBundle.getInt("eventID");
 
-        eTitle = eventBundle.getString("eventName");
+
+        try {
+            getEvent(eventID);
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        /*eTitle = eventBundle.getString("eventName");
         eDesc = eventBundle.getString("eventDescription");
         eLocation = eventBundle.getString("eventLocation");
         eFromDate = eventBundle.getString("eventFromDate");
@@ -236,9 +254,9 @@ public class ViewEventActvity extends Activity{
         status = (IsAttending) eventBundle.get("isAttending");
         byteArray = eventBundle.getByteArray("eventPhoto");
         boolean itemListAccess = eventBundle.getBoolean("itemList");
-        boolean messageBoardAccess = eventBundle.getBoolean("messageBoard");
+        boolean messageBoardAccess = eventBundle.getBoolean("messageBoard");*/
     }
-    public void initializeData(){
+    /*public void initializeData(){
         etTitle.setText(eTitle);
         etDesc.setText(eDesc);
         etLocation.setText(eLocation);
@@ -246,9 +264,9 @@ public class ViewEventActvity extends Activity{
         etToDate.setText(eToDate);
         etFromTime.setText(eFromTime);
         etToTime.setText(eToTime);
-        bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+//        bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         eventImage.setImageBitmap(bmp);
-    }
+    }*/
 
     public void onEdit(){
        etTitle.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -717,13 +735,13 @@ public class ViewEventActvity extends Activity{
         });
     }
 
-   /* public void getEvent() throws JSONException {
-        RestClient.get("events/" + eventID, null, LoginActivity.token, new JsonHttpResponseHandler() {
-            public void onSuccess(String response) {
+    public void getEvent(int id) throws JSONException {
+        RestClient.get("events/" + id, null, LoginActivity.token, new JsonHttpResponseHandler() {
+            public void onSuccess(int statusCode, Header[] header, JSONObject response){
                 JSONObject res;
                 String statusString;
                 try {
-                    res = new JSONObject(response);
+                    res = response;
                     eTitle = res.getString("what");
                     eDesc = res.getString("why");
                     eLocation = res.getString("where");
@@ -737,6 +755,20 @@ public class ViewEventActvity extends Activity{
                     Bitmap eventImg = base64ToBitmap(base64String);
                     bmp = Bitmap.createScaledBitmap(eventImg, 140, 150, true);
 
+                    etTitle.setText(eTitle);
+                    etDesc.setText(eDesc);
+                    etLocation.setText(eLocation);
+                    etFromDate.setText(eFromDate);
+                    etToDate.setText(eToDate);
+                    etFromTime.setText(eFromTime);
+                    etToTime.setText(eToTime);
+                    eventImage.setImageBitmap(bmp);
+
+                    if(status == IsAttending.ATTENDING){isAttending();}
+                    else if(status == IsAttending.INVITED){isInvited();}
+                    else if(status == IsAttending.OWNER){isOwner();}
+                    else if(status == IsAttending.DECLINED){isDeclined();}
+
                     Log.d("debug", res.getString("some_key")); // this is how you get a value out
                 } catch (JSONException e) {
                     // TODO Auto-generated catch block
@@ -745,7 +777,7 @@ public class ViewEventActvity extends Activity{
             }
         });
 
-    }*/
+    }
 
     private Bitmap base64ToBitmap(String b64){
         byte[] imageAsBytes = Base64.decode(b64.getBytes(),Base64.DEFAULT);
