@@ -114,7 +114,6 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
 
         }
         rowView.setTag(friend);
-
         return rowView;
     }
     static class FriendHolder

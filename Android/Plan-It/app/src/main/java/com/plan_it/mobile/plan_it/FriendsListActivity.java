@@ -64,6 +64,7 @@ public class FriendsListActivity extends AppCompatActivity implements SwipeRefre
     @Override
     public void onRefresh() {
         swipeRefreshLayout.setRefreshing(true);
+        friendsList = null;
         Intent intent = getIntent();
         finish();
         startActivity(intent);
