@@ -68,26 +68,34 @@ database.messageModel = mongoose.model("Message", messagejs);
 //Create Message model
 database.messagesModel = mongoose.model("Messages", messagesjs);
 
-database.eventModel.calculateEst = function(eventid, callback) {
+database.eventModel.calculateMoney = function(eventid, callback) {
     database.eventModel.aggregate([
-      {$match : {EventID:eventid}},
       {
-      $unwind: "$itemList"
-    }, {
-      $group: {
-        _id: null,
-        estCost: {
-          $sum: "$itemList.estCost",
-        },
-        actCost: {
-          $sum: "$itemList.actCost"
+        $match : {
+          EventID: eventid
+        }
+      },
+      {
+        $unwind: "$itemList"
+      },
+      {
+        $group: {
+          _id: null,
+          estCost: {
+            $sum: "$itemList.estCost",
+          },
+          actCost: {
+            $sum: "$itemList.actCost"
+          },
+          size: {
+            $sum : "$itemList"
+          }
         }
       }
-    }], function(err, result) {
+    ], function(err, result) {
       if (err) {
         console.log(err);
       }
-      console.log("result" + result);
       callback(result);
     });
 }
@@ -97,12 +105,14 @@ database.messagesModel.messageList = function(msgid, eventid, callback){
       {$match : { EventID : eventid}},
       {$unwind: '$messages'},
       {$match : {'messages.MessageID' : { $gte : msgid}}},
-      {$group : {_id:null,
+      {$group : {
+        _id:null,
         messages : {
           $push : {
             'MessageID' :'$messages.MessageID',
             'Message' :'$messages.message',
             'userID' : '$messages.userID',
+            'friendlyName' : '$messages.friendlyName',
             'time' : '$messages.time'
             }
         }

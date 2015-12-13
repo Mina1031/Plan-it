@@ -8,26 +8,16 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-
-import cz.msebera.android.httpclient.Header;
 
 public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
     ArrayList<FriendListModel> friendsList;
@@ -38,7 +28,9 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
     boolean isFromEditEvent;
     int eventID;
     View view;
-    public FriendsListAdapter(Context context, int resource, ArrayList<FriendListModel> friendsList, int eventID, boolean isFromEditEvent) {
+
+    public FriendsListAdapter(Context context, int resource, ArrayList<FriendListModel> friendsList, int eventID, boolean isFromEditEvent)
+    {
         super(context, resource, friendsList);
         this.eventID = eventID;
         this.isFromEditEvent = isFromEditEvent;
@@ -47,7 +39,8 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
         this.friendsList = friendsList;
     }
 
-    public View getView(final int position, View view, ViewGroup parent) {
+    public View getView(final int position, View view, ViewGroup parent)
+    {
         this.view = view;
         View rowView = view;
         i++;

@@ -5,6 +5,7 @@ var message = new mongoose.Schema({
     MessageID: { type : Number},
     message: String,
     userID: Number,
+    friendlyName: String,
     time: { type: Date, default: Date.now }
 });
 

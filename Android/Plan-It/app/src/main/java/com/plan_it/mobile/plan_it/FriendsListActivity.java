@@ -44,6 +44,7 @@ public class FriendsListActivity extends AppCompatActivity implements SwipeRefre
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         setContentView(R.layout.activity_friends_list);
+
         if(intent.getExtras() != null) {
             isFromEditEvent = bundle.getBoolean("isFromEditEvent");
             eventID = bundle.getInt("eventID");

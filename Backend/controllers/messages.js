@@ -13,7 +13,8 @@ messages.createMessage = function(req, res, next){
         else{
           var message = new database.messageModel({
             "message" : req.body.message,
-            "userID" : result.UserID
+            "userID" : result.UserID,
+            "friendlyName" : result.friendlyName
           });
           messages.messages.push(message);
 
