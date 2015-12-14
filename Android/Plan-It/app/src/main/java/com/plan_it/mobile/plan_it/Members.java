@@ -12,12 +12,14 @@ public class Members {
     MemberStatus status;
     boolean itemList;
     boolean messageBoard;
+    boolean isPaying;
 
 
-    Members(int memberId, String memberName,MemberStatus status, boolean itemList, boolean messageBoard){
+    Members(int memberId, String memberName,MemberStatus status, boolean isPaying, boolean itemList, boolean messageBoard){
         this.memberId = memberId;
         this.memberName = memberName;
         this.status = status;
+        this.isPaying = isPaying;
         this.itemList = itemList;
         this.messageBoard = messageBoard;
     }

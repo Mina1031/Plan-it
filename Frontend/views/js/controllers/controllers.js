@@ -1,4 +1,4 @@
-angular.module('controller', [])
+angular.module('controller', ['angularMoment'])
 .controller('MainController', function($scope, ServiceForUser, $cookies, $location)
 {
   console.log('Hello from Main controller');
@@ -503,8 +503,11 @@ angular.module('controller', [])
   };
 
 })
+.controller('EventBudgetController', function ($scope, $location){
 
 
+
+})
 .controller('AccountController', function ($scope, $location)
 {
 

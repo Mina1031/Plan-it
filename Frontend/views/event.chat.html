@@ -1,7 +1,7 @@
-<div ng-controller="EventChatController">
+  <div ng-controller="EventChatController">
 
     <ul class="messages">
-        <li ng-repeat="msg in messageList track by $index">{{msg.Message}}  --  {{msg.userID}} -- {{msg.time}}</li>
+        <li ng-repeat="msg in messageList track by $index">{{msg.Message}}  --  {{msg.friendlyName}} -- {{msg.time |  amDateFormat:'MMMM Do h:mm a'}}</li>
     </ul>
 
     <form class="chat" ng-submit="sendMsg()">

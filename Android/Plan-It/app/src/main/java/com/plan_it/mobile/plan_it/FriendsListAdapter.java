@@ -87,7 +87,6 @@ public class FriendsListAdapter extends ArrayAdapter<FriendListModel> {
                     });
                     alert.show();
                     notifyDataSetChanged();
-
                 }
             });
         }

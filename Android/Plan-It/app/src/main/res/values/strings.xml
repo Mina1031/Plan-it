@@ -65,5 +65,6 @@
     <string name="title_activity_messages">Messages</string>
     <string name="send">Send</string>
     <string name="type_message">Type Message Here</string>
+    <string name="title_activity_budget_list">BudgetListActivity</string>
     <string name="time">Time to get a watch</string>
 </resources>

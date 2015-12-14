@@ -1,6 +1,6 @@
 package com.plan_it.mobile.plan_it;
 
-import android.app.Activity;
+
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -25,7 +26,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -45,12 +45,11 @@ import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
 
-public class ViewEventActvity extends Activity implements SwipeRefreshLayout.OnRefreshListener{
+public class ViewEventActvity extends AppCompatActivity {
 
     private static final int CAMERA_REQUEST = 1888;
 
@@ -86,6 +85,7 @@ public class ViewEventActvity extends Activity implements SwipeRefreshLayout.OnR
     Button btnLoadImg;
     ImageView eventImage;
     Button deleteEvent;
+    Button budgetButton;
 
     Calendar myCalendar = Calendar.getInstance();
 
@@ -93,7 +93,6 @@ public class ViewEventActvity extends Activity implements SwipeRefreshLayout.OnR
     ListView attendeeList;
     Context context = this;
 
-    private SwipeRefreshLayout swipeRefreshLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,6 +112,7 @@ public class ViewEventActvity extends Activity implements SwipeRefreshLayout.OnR
         btnGoing = (Button)findViewById(R.id.btnAccept);
         btnNotGoing = (Button)findViewById(R.id.btnDecline);
         deleteEvent = (Button)findViewById(R.id.btnViewDeleteEvent);
+        budgetButton = (Button) findViewById(R.id.btnBudget);
 
         Intent intent = getIntent();
         Bundle eventBundle = intent.getExtras();
@@ -140,24 +140,52 @@ public class ViewEventActvity extends Activity implements SwipeRefreshLayout.OnR
         });
         onEdit();
 
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout_view_event);
-        swipeRefreshLayout.setOnRefreshListener(this);
+    }
 
-
-
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_view_event_actvity, menu);
+        return true;
     }
 
     @Override
-    public void onRefresh() {
-        swipeRefreshLayout.setRefreshing(true);
-        try {
-            getEvent(eventID);
-            swipeRefreshLayout.setRefreshing(false);
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_friends_list)
+        {
+            Intent intent = new Intent(this, FriendsListActivity.class);
+            startActivity(intent);
         }
+        if (id == R.id.action_add_friends)
+        {
+            Intent intent = new Intent(this, AddFriendActivity.class);
+            startActivity(intent);
+        }
+        if (id == R.id.action_event_list)
+        {
+            Intent intent = new Intent(this, EventsListActivity.class);
+            startActivity(intent);
+        }
+        if(id == R.id.action_refresh)
+        {
+            Intent intent = getIntent();
+            startActivity(intent);
+        }
+        if (id == R.id.action_logout)
+        {
+            LoginActivity.token = null;
+            LoginActivity.userID = 0;
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
     }
+
     public void imageOption(){
         final CharSequence[] items = {"Take Photo", "Choose from Library", "Cancel"};
         AlertDialog.Builder builder = new AlertDialog.Builder(ViewEventActvity.this);
@@ -390,30 +418,6 @@ public class ViewEventActvity extends Activity implements SwipeRefreshLayout.OnR
         });
     }
 
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_view_event_actvity, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     public void isAttending(){
         etTitle.setEnabled(false);
         etTitle.setFocusable(false);
@@ -436,18 +440,39 @@ public class ViewEventActvity extends Activity implements SwipeRefreshLayout.OnR
         deleteEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    leaveEvent();
-                    Intent i = new Intent(ViewEventActvity.this, EventsListActivity.class);
-                    startActivity(i);
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(
+                        context);
+                alert.setTitle("Alert!!");
+                alert.setMessage("Are you sure to leave this event");
+                alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ClickToLeave();
+                        dialog.dismiss();
+                    }
+                });
+                alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                alert.show();
             }
         });
     }
 
+    public  void ClickToLeave()
+    {
+        try {
+            leaveEvent();
+            Intent i = new Intent(ViewEventActvity.this, EventsListActivity.class);
+            startActivity(i);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     public void isDeclined(){
         etTitle.setEnabled(false);
         etTitle.setFocusable(false);
@@ -470,19 +495,31 @@ public class ViewEventActvity extends Activity implements SwipeRefreshLayout.OnR
         messageBoard.setVisibility(View.GONE);
         btnLoadImg.setVisibility(View.GONE);
 
+        budgetButton.setVisibility(View.GONE);
         btnGoing.setVisibility(View.VISIBLE);
         deleteEvent.setVisibility(View.VISIBLE);
         deleteEvent.setText("Leave Event");
         deleteEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    leaveEvent();
-                    Intent i = new Intent(ViewEventActvity.this, EventsListActivity.class);
-                    startActivity(i);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(
+                        context);
+                alert.setTitle("Alert!!");
+                alert.setMessage("Are you sure to leave this event");
+                alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ClickToLeave();
+                        dialog.dismiss();
+                    }
+                });
+                alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                alert.show();
             }
         });
         btnGoing.setOnClickListener(new View.OnClickListener() {
@@ -522,6 +559,7 @@ public class ViewEventActvity extends Activity implements SwipeRefreshLayout.OnR
         messageBoard.setVisibility(View.GONE);
         btnLoadImg.setVisibility(View.GONE);
 
+        budgetButton.setVisibility(View.GONE);
         btnGoing.setVisibility(View.VISIBLE);
         btnNotGoing.setVisibility(View.VISIBLE);
 
@@ -584,13 +622,24 @@ public class ViewEventActvity extends Activity implements SwipeRefreshLayout.OnR
         deleteEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    deleteEvent();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Intent i = new Intent(ViewEventActvity.this, EventsListActivity.class);
-                startActivity(i);
+                android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(
+                        context);
+                alert.setTitle("Alert!!");
+                alert.setMessage("Are you sure to leave this event");
+                alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ClickToLeave();
+                        dialog.dismiss();
+                    }
+                });
+                alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                alert.show();
             }
         });
 
@@ -693,7 +742,13 @@ public class ViewEventActvity extends Activity implements SwipeRefreshLayout.OnR
                         String friendlyName = member.getString("friendlyName");
                         String status = member.getString("isAttending");
                         MemberStatus memberStatus = MemberStatus.valueOf(status.trim().toUpperCase());
-                        mList.add(new Members(userId, friendlyName, memberStatus, true, true));
+                        boolean isPaying;
+                        if (!member.has("isPaying")) {
+                            isPaying = true;
+                        } else {
+                            isPaying = member.getBoolean("isPaying");
+                        }
+                        mList.add(new Members(userId, friendlyName, memberStatus, isPaying, true, true));
                         Log.d("Member: ", member.toString());
                     }
 
@@ -824,6 +879,9 @@ public class ViewEventActvity extends Activity implements SwipeRefreshLayout.OnR
         });
     }
 
-
-
+    public void navBudgetList(View v){
+        Intent intent = new Intent(ViewEventActvity.this, BudgetListActivity.class);
+        intent.putExtra("eventID", eventID);
+        startActivity(intent);
+    }
 }

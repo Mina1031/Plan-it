@@ -187,6 +187,7 @@ event.createListItem = function(req, res, next) {
           database.eventModel.calculateMoney(parseInt(req.params.id),function(result){
             event.totalEstCost = result[0].estCost;
             event.totalActCost = result[0].actCost;
+            event.save();
           });
           res.sendStatus(201);
         }
@@ -212,7 +213,6 @@ event.claimItem = function(req, res, next){
     if(err)
       console.log(err);
     else{
-      console.log(result);
       database.eventModel.update({"itemList.ListID" : req.params.item, "EventID" : req.params.id},
       {$set : { "itemList.$.whoseBringing": result.friendlyName}},
       function(err, item){
@@ -232,10 +232,9 @@ event.deleteItem = function(req, res, next){
     if(err)
       console.log(err);
     else
-      console.log(JSON.stringify(item,4,null));
-      database.eventModel.calculateEst(req.params.id, function(result) {
-        item.totalEstCost = result.estCost;
-        item.totalActCost = result.actCost;
+      database.eventModel.calculateMoney(parseInt(req.params.id), function(result) {
+        item.totalEstCost = result[0].estCost;
+        item.totalActCost = result[0].actCost;
         item.save(function(err) {
           if (err)
             console.log(err);
@@ -261,7 +260,18 @@ event.updateItem = function(req, res, next){
               if(err)
                 console.log(err);
               else{
-                res.json(saved);
+                database.eventModel.calculateMoney(parseInt(req.params.id), function(calc) {
+                  saved.totalEstCost = calc[0].estCost;
+                  saved.totalActCost = calc[0].actCost;
+                  saved.save(function(err) {
+                    if (err)
+                      console.log(err);
+                    else
+                      //res.sendStatus(201);
+                      res.json(saved);
+                  });
+                });
+                //res.json(saved);
               }
             });
         }

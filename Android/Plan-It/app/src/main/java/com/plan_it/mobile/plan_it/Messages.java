@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,15 +17,23 @@ import android.widget.Toast;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.Header;
 
 public class Messages extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     ArrayList<MessageModel> messages = new ArrayList<>();
+    int messageId;
     ListView listView;
     EditText txt_message;
     String message = "";
     String token;
     int eventID;
+    int userId = LoginActivity.userID;
     Context context = this;
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -32,26 +41,47 @@ public class Messages extends AppCompatActivity implements SwipeRefreshLayout.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getExtras();
-        GetMessages();
         setContentView(R.layout.activity_messages);
 
         txt_message = (EditText)findViewById(R.id.txt_message);
         txt_message.setText("");
         ImageButton send = (ImageButton)findViewById(R.id.btn_send_message);
-        listView = (ListView)findViewById(R.id.messages_list_view);
-        listView.setAdapter(new MessageAdapter(context, R.layout.message, messages));
+        GetMessages(messageId);
+
     }
 
-    public void GetMessages()
+
+    public void GetMessages(int id)
     {
-        messages.add(new MessageModel(LoginActivity.userID, "Kevin Murphy", "This is a message", "4:50pm"));
-        messages.add(new MessageModel(1, "Steven Murphy", "This is also message", "4:54pm"));
-        messages.add(new MessageModel(1, "Kevin Bacon", "This is a degree, get a little closer to me", "5:00pm"));
-        messages.add(new MessageModel(1, "Kristian", "I is do's the workings", "5:10pm"));
-        messages.add(new MessageModel(1, "Computer", "EXTERMINATE, KILL ALL HUMANS...... Daisy, Daisy, \nGive me your answer true.\nI'm half crazy, all for the love of you", "5:50pm"));
-        messages.add(new MessageModel(1, "Server", "Yo Human, that computer is acting strange dawg", "6:50pm"));
-        messages.add(new MessageModel(1, "Johnny Pneumonic", "I'm in the system, the computer will be defragged", "6:56pm"));
-        messages.add(new MessageModel(LoginActivity.userID, "Kevin Murphy", "Um.......... This is weird", "7:50pm"));
+        RestClient.get("/message/" + eventID + "/id/" + id, null, LoginActivity.token, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray messageArray) {
+               // Log.d("onSuccess: ", messageArray.toString());
+                JSONObject list_message = null;
+                try {
+                    list_message = messageArray.getJSONObject(0);
+                    JSONArray messageList = list_message.getJSONArray("messages");
+                    JSONObject messageObject = null;
+                    for (int i = 0; i < messageList.length(); i++) {
+                        messageObject = messageList.getJSONObject(i);
+                        messages.add(new MessageModel(messageObject.getInt("userID"), messageObject.getString("friendlyName"), messageObject.getString("Message"), messageObject.getString("time")));
+
+                    Log.d("Message: ", list_message.toString());
+                    }
+                    listView = (ListView)findViewById(R.id.messages_list_view);
+                    listView.setAdapter(new MessageAdapter(context, R.layout.message, messages));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] header, Throwable throwable, JSONObject response) {
+                Toast.makeText(getApplicationContext(), "FAILURE", Toast.LENGTH_LONG).show();
+            }
+
+        });
     }
 
     @Override
@@ -126,6 +156,7 @@ public class Messages extends AppCompatActivity implements SwipeRefreshLayout.On
         {
             Toast.makeText(this, "Please Type a message \nbefore hitting send", Toast.LENGTH_LONG);
         }
+        txt_message.setText("");
     }
 
     @Override

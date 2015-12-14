@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:padding="10dp">
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight=".1"
+        android:src="@drawable/ic_account_circle_blue_24dp"
+        android:id="@+id/budget_list_profile_image"/>
+    <TextView
+        android:paddingTop="10dp"
+        android:id="@+id/budget_list_friend_id"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        android:text="@string/email_user"
+        android:textSize="25sp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight=".75"/>
+    <CheckBox
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight=".15"
+        android:id="@+id/budget_list_isPaying" />
+</LinearLayout>

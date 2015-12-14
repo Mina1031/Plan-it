@@ -1,0 +1,73 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.plan_it.mobile.plan_it.BudgetListActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/layout_budget_list_headers">
+        <TextView
+            android:background="@drawable/back"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_weight=".60"
+            android:layout_height="match_parent"
+            android:text="Member Name"
+            android:id="@+id/item_list_label_item"
+            android:textSize="25sp"/>
+        <TextView
+            android:background="@drawable/back"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_weight=".40"
+            android:layout_height="match_parent"
+            android:text="Is Paying"
+            android:id="@+id/item_list_label_estimated_actual_cost"
+            android:textSize="25sp"/>
+    </LinearLayout>
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipe_refresh_layout_budget_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_budget_list_headers"
+        android:layout_above="@+id/layout_budget_list_footers">
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/budget_list_view"
+            android:background="@drawable/back"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/layout_budget_list_footers"
+        android:layout_alignParentBottom="true">
+        <TextView
+            android:background="@drawable/back"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_weight=".60"
+            android:layout_height="match_parent"
+            android:text="Amount to pay"
+            android:id="@+id/budget_list_paying_label"
+            android:textSize="30sp"/>
+        <TextView
+            android:background="@drawable/back"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_weight=".40"
+            android:layout_height="match_parent"
+            android:text="$0"
+            android:id="@+id/budget_list_paying_amount"
+            android:textSize="30sp"/>
+    </LinearLayout>
+
+</RelativeLayout>

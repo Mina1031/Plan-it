@@ -261,13 +261,22 @@ public class EventsListActivity extends AppCompatActivity implements SearchView.
                     mEvents = new ArrayList<>();
                     for(int i = 0; i < eventsList.length(); i++){
                         firstEvent = eventsList.getJSONObject(i);
-                        String eventImge = firstEvent.getString("picture");
+
                         String userStats = firstEvent.getString("isAttending");
                         IsAttending status = IsAttending.valueOf(userStats.trim().toUpperCase());
+                        Bitmap scaledImage;
 
-                        Bitmap eventimg = base64ToBitmap(eventImge);
-
-                        Bitmap scaledImage = Bitmap.createScaledBitmap(eventimg, 140, 150, true);
+                        if(firstEvent.has("picture"))
+                        {
+                            String eventImge = firstEvent.getString("picture");
+                            Bitmap eventimg = base64ToBitmap(eventImge);
+                            scaledImage = Bitmap.createScaledBitmap(eventimg, 140, 150, true);
+                        }
+                        else
+                        {
+                            Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
+                            scaledImage = Bitmap.createScaledBitmap(icon, 140, 150, true);
+                        }
 
                         mEvents.add(new Event(firstEvent.getInt("EventID"), firstEvent.getString("what"), "Kevin Murphy", firstEvent.getString("why"), firstEvent.getString("where"), scaledImage, firstEvent.getString("when"), firstEvent.getString("endDate"),firstEvent.getString("fromTime"), firstEvent.getString("toTime"), status, true, true));
                                 Log.d("RestD", firstEvent.toString());

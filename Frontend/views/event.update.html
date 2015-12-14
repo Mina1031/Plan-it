@@ -12,19 +12,19 @@
     <span class="error" ng-show="new_event_form.where.$error.required && new_event_form.submitted">Cannot leave where field empty.</span>
     <span class="error" ng-show="new_event_form.where.$error.pattern"></span>
     <input class="form-control" type="text" ng-model="event.where" name="where" id="where" placeholder="Location" required>
-   
+
     <span class="start">
         <h4>When <small>does the event start</small></h4>
         <!-- <input class="form-control" type="datetime-local" ng-model="event.when" required> -->
         <!-- datetime-local does not work for IE or FF -->
-        <input class="form-control" type="text" ng-model="event.when" name="when" id="when" placeholder="MM/DD/YYYY" required>
-        <input class="form-control" type="text" ng-model="event.fromTime" name="fromTime" id="fromTime" placeholder="HH:MM AM/PM" required>
+        <input class="form-control" type="text" class="datepicker" data-provide="datepicker" ng-model="event.when" name="when" id="when" placeholder="MM/DD/YYYY" required>
+        <input class="form-control" type="text" class="bootstrap-timepicker timepicker" data-default-time="false" ng-model="event.fromTime" name="fromTime" id="fromTime" placeholder="HH:MM AM/PM" required>
     </span>
     <span class="end">
         <h4><small>end</small></h4>
         <!-- <input class="form-control" type="datetime-local" ng-model="event.endDate" required> -->
-        <input class="form-control" type="text" ng-model="event.endDate" name="endDate" id="endDate" placeholder="MM/DD/YYYY" required>
-        <input class="form-control" type="text" ng-model="event.toTime" name="toTime" id="toTime" placeholder="HH:MM AM/PM" required>
+        <input class="form-control" type="text" class="datepicker" data-provide="datepicker" ng-model="event.endDate" name="endDate" id="endDate" placeholder="MM/DD/YYYY" required>
+        <input class="form-control" type="text" class="bootstrap-timepicker timepicker" data-default-time="false" ng-model="event.toTime" name="toTime" id="toTime" placeholder="HH:MM AM/PM" required>
     </span>
     <!-- missing "when" error message, doesn't fit well in layout, maybe use javascript to focus the field -->
 
@@ -38,7 +38,7 @@
     <br><br>
     <img class="thumb" id="preview" ng-src="{{step}}" ng-model="event.picture"><br>
     <input type="file" ng-model-instant onchange="angular.element(this).scope().imageUpload(event)">
-    
+
     <br><br>
 
     <div style="text-align: center;">
@@ -50,8 +50,18 @@
 </div>
 
 <!-- IF USING BOOTSTRAP DATEPICKER -->
-<!-- <script type="text/javascript">
-    $(function () {
-        $('#datetimepicker1').datetimepicker();
-    });
-</script> -->
+<script type="text/javascript">
+$('#fromTime').timepicker({
+  icons: {
+    up: 'glyphicon glyphicon-heart',
+    down: 'glyphicon glyphicon-chevron-down'
+  }
+});
+$('#toTime').timepicker();
+$('#when').datepicker({
+    format: 'dd/mm/yyyy',
+})
+$('#endDate').datepicker({
+    format: 'dd/mm/yyyy',
+})
+</script>

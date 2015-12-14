@@ -115,9 +115,18 @@ database.messagesModel.messageList = function(msgid, eventid, callback){
             'friendlyName' : '$messages.friendlyName',
             'time' : '$messages.time'
             }
+          },
+        max : { $max : '$messages.MessageID'}
+        }
+      },
+      {
+        $project: {
+          length : { $size : '$messages'},
+          messages : '$messages',
+          max : '$max'
         }
       }
-    }],function(err, result){
+    ],function(err, result){
       if (err) {
         console.log(err);
         return;

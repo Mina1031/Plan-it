@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/txt_message_layout"
+    android:background="@drawable/txt_message_received">
 <TextView
     android:layout_width="0dp"
     android:layout_height="0dp"
@@ -18,7 +21,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight=".80"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_gravity="left">
 
         <TextView
             android:layout_width="match_parent"
@@ -38,5 +42,12 @@
             android:gravity="right"/>
     </LinearLayout>
 
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight=".20"
+        android:id="@+id/img_message_user_right"
+        android:visibility="gone"
+        android:src="@drawable/ic_account_circle_blue_24dp"/>
 
 </LinearLayout>

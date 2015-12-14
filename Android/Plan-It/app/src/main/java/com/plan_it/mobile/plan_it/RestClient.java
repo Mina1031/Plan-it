@@ -7,7 +7,7 @@ import com.loopj.android.http.*;
 
 public class RestClient {
     private static final String BASE_URL = "http://planit.lukefarnell.ca:3000/";
-    //private static final String BASE_URL = "http://192.168.0.52:3000/";
+   // private static final String BASE_URL = "http://192.168.0.52:3000/";
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 
